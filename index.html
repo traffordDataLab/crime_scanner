@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <title>Crime scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta charset="UTF-8"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto"/>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+  crossorigin=""/>
+  <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
+  <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet//MarkerCluster.TraffordDataLab.css"/>
+
+  <style>
+  html, body
+  {
+    padding: 0 20px 5em 12px;
+  }
+  h3
+  {
+    margin:0px;
+    padding: 5px 0px;
+  }
+  .leaflet-control-attribution a
+  {
+    color: #fc6721;
+  }
+  #title
+  {
+    font-size: 25px;
+  }
+  #map
+  {
+  width:100%;
+  height:300px;
+  }
+  #tableDiv
+  {
+  width:100%;
+  margin:auto;
+  }
+  _:-ms-fullscreen, :root #timeLine, #tableDiv{
+    height:20vw;
+  }
+  #region, div[id="local Authority"], div[id="area type"], #area, div[id="crime categories"], #dates
+  {
+    float: left;
+  }
+  #crimeTotal{
+    padding: 0px;
+    margin: 0px;
+  }
+  .clearb{
+    clear: both;
+    border: 1px;
+  }
+  .left
+  {
+    float:left;
+    padding-right: 2%;
+  }
+  .right
+  {
+    float:right;
+    padding-left: 2%;
+  }
+  .w50
+  {
+    width:48%;
+  }
+  .fontS
+  {
+    font-size: 12px;
+  }
+  .fontSS
+  {
+    font-size: 10px;
+  }
+  #downloadCSV, #LSOAbutton
+  {
+    /*font-size: 12px;*/
+    margin: 0px;
+  }
+  .main
+  {
+    border-top: 1px solid gray;
+    margin-top: 0px;
+    padding-top: 10px;
+  }
+  #dates
+  {
+    display: inline;
+  }
+  #mapTitle
+  {
+    font-size: 16px;
+    padding-top: 10px;
+  }
+  #progressBar
+  {
+    width: 0%;
+    height: 2px;
+    background-color: #fc6721;
+    padding: 0;
+    margin:0;
+  }
+  #LSOA4Ward
+  {
+    padding-bottom: 16px;
+  }
+  .nonVisible
+  {
+    opacity: 0;
+  }
+  @media (max-width:800px)
+  {
+    .w50
+    {
+      width:100%;
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    #maps
+    {
+      width:95%;
+    }
+    #tableDiv
+    {
+      width:100%;
+    }
+    .fontS
+    {
+      font-size: 12px;
+    }
+    .fontSS
+    {
+      font-size: 10px;
+      padding-bottom: 10px;
+    }
+    #mapTitle
+    {
+      font-size: 12px
+    }
+  }
+  @media (min-width:1300px)
+  {
+    .double
+    {
+      width: 1240px;
+    }
+  }
+  </style>
+  </head>
+  <body>
+    <div id='title'>Crime scanner</div>
+    <div class='clearb'>
+      <div class='clearb'>
+        <div id='region'></div>
+        <div id='local Authority'></div>
+      </div>
+      <div class='clearb'>
+        <div id='area type'></div>
+        <div id='area'></div>
+      </div>
+    </div>
+
+    <div id="progressBar" class="clearb"></div>
+
+    <div id="mainC" class="main clearb">
+      <div id='up' class="clearb">
+        <div class="left w50">
+          <h3 id='areaName'></h3>
+          <div class='clearb fontS'>
+            <div id='summary' class="clearb fontS">
+              <div class="left"> There were <span id='cases'></span> incidents recorded by the police on </div> <div id='dates'></div>
+              <ul>
+                <li id="crimeTotal" class="clearb fontS"></li>
+              </ul>
+            </div>
+            <div class="left">The change on number of incidents for category </div><div id='crime categories'></div>
+            <ul class="clearb fontS">
+              <li id='monthSummary'></li>
+              <li id='yearSummary'></li>
+            </ul>
+            <p>Click on the charts to change the category or month displayed.</p>
+            <div id='LSOA4Ward'></div>
+            <p class="clearb">Download <span id='downloadCSV' class="labButton" onclick="createCSV()"> CSV </span></p>
+          </div>
+        </div>
+        <div class="right w50">
+          <div id= "tableDiv">
+            <p id= "tableTitle"></p>
+          </div>
+        </div>
+      </div>
+      <div id="down" class="clearb">
+        <div class="left w50">
+          <div id='timeLine'></div>
+        </div>
+        <div class="right w50">
+          <div id= 'mapTitle' class="clearb fontS"></div>
+          <div id= 'map' class="clearb"></div>
+          <div class="fontSS">*Locations are only an <a href="https://data.police.uk/about/#location-anonymisation">approximation</a> of where the actual crimes occurred.</div>
+        </div>
+      </div>
+    </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+    <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+    <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+    crossorigin=""></script>
+    <script src="http://www.trafforddatalab.io/assets/d3/timeSeries.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+    <script src="http://www.trafforddatalab.io/assets/d3/horizBarChart.js"></script>
+    <script>
+    var mainContent = document.getElementById("mainC");
+    mainContent.classList.add("nonVisible");
+    var endpointODC = "http://opendatacommunities.org/sparql.json"
+    var formatedDateArray= []
+    var lastUpdate= ""
+    var responsesArray=[]
+    var responses=0
+    var partialObj=[]
+    var unavailableData=[]
+
+    var monthViz=0
+    var categoryViz=0
+    var geojsonArray=[]//geojson array
+    var arrayCounts=[]
+    var categories=[]
+    var nameObj={la:"",ward:"",lsoa:""}
+    var nameToPrint=""
+    var areaName=""
+    var areaCode=""
+    var counterArray=[]
+    var parseTime = d3.timeParse("%Y-%m");
+    var formatTimeB = d3.timeFormat("%B %Y");
+    var formatTimeC = d3.timeFormat("%b %Y");
+    var numFormat = d3.format(",");
+    var stringCSV = ""
+    var fail=false
+
+    if (location.protocol == 'https:')
+    location.href = location.href.replace(/^https:/, 'http:')
+
+window.onpopstate = function(event) {
+  window.location.reload(true)
+};
+
+    getLastUpdateDate()
+    getCategories()//call readURLData()
+    loadAreas ("{}")
+
+    var query = "SELECT DISTINCT ?area_name ?area_code WHERE { ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://opendatacommunities.org/def/ontology/admingeo/Region> . ?s <http://publishmydata.com/def/ontology/foi/displayName> ?area_name . ?s <http://publishmydata.com/def/ontology/foi/code> ?area_code . }"
+    postQuery(query,endpointODC,function(d){popSelect(d,"region","loadLocalAuthorityList")});
+
+    var dateNow = new Date();
+    var leafletMap = L.map('map')
+    tiles=L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://cartodb.com/attributions">CartoDB</a> Contains National Statistics &amp; OS data <a href="https://www.ons.gov.uk/methodology/geography/licences">&copy; Crown copyright and database right ' + dateNow.getFullYear() + '</a>',
+    }).addTo(leafletMap);
+    boundaryGroup = L.layerGroup().addTo(leafletMap);
+    clusters = L.markerClusterGroup({
+      spiderfyOnMaxZoom: true,
+      showCoverageOnHover: false,
+      zoomToBoundsOnClick: true
+    });
+
+    function getLastUpdateDate(){
+      //get the latest date
+      var dateLastUpdated = "https://data.police.uk/api/crime-last-updated"
+      var lastUpdate =""
+      labAjax(dateLastUpdated,generateDates,{data:dateLastUpdated, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}]})
+    }
+
+    function generateDates(lastDateObj){
+      lastUpdate= lastDateObj.date.slice(0,-3)
+      monthViz=0
+      formatedDateArray= []
+      currentDateKey = ""
+      nextDateKey= ""
+      yeartoSend=lastUpdate.slice(0,-3)
+      monthtoSend=lastUpdate.slice(5)
+
+      for (var i = 0;i<36;i++){
+        currentDateKey = yeartoSend + "-" + monthtoSend
+        formatedDateArray.push(currentDateKey)
+        if(monthtoSend=="01"){
+          yeartoSend = (parseInt(yeartoSend)-1).toString()
+          monthtoSend="12"
+        } else {
+          monthtoSend=("0" + (parseInt(monthtoSend)-1)).slice(-2)
+        }
+      }
+      popSelectDates(formatedDateArray,"dates","updateDates");
+      document.getElementById('selectDate').disabled=true;
+    }
+
+    function loadLocalAuthorityList(LAkey){
+
+      if(LAkey=="{}"){
+        loadAreas ("{}")
+        document.getElementById('area').innerHTML = "";
+        document.getElementById('local Authority').innerHTML = "";
+      }else{
+        document.getElementById('area').innerHTML = "";
+        document.getElementById('areaType').disabled=true;
+        var LAkey=JSON.parse(LAkey.replace(/£/g, '"'));
+        var area_code = LAkey["area_code"];
+        var area_name = LAkey["area_name"];
+
+        //ward list
+        var query = "SELECT DISTINCT ?area_name ?area_code "
+        query += "WHERE { ?s <http://publishmydata.com/def/ontology/foi/within> <http://opendatacommunities.org/id/geography/administration/rgn/"+ area_code + "> ."
+        query += "?s <http://publishmydata.com/def/ontology/foi/memberOf> <http://opendatacommunities.org/def/foi/collection/lower-tier-authorities> ."
+        query += "?s <http://www.w3.org/2004/02/skos/core#note> 'Live' ."
+        query += "?s <http://publishmydata.com/def/ontology/foi/displayName> ?area_name ."
+        query += "?s <http://publishmydata.com/def/ontology/foi/code> ?area_code . }"
+
+        postQuery(query,endpointODC,function(d){popSelect(d,"local Authority","loadAreas")});
+
+      }
+
+    }
+
+    function loadAreas (LAkey) {
+
+      if(LAkey=="{}"){
+        document.getElementById('area').innerHTML = "";
+
+        var laSelect = '<select id="areaType" name="frmTypes" onChange="loadAreaList(this.value)" class="datasetSelect"><option value="{}">Select an area type</option>';
+        laSelect += '</select>';
+        var divf = document.createElement('div');
+        divf.innerHTML = laSelect;
+        document.getElementById("area type").innerHTML = "";
+        document.getElementById("area type").appendChild(divf);
+        document.getElementById('areaType').disabled=true;
+      }else{
+        document.getElementById('area').innerHTML = "";
+        var LAkey=JSON.parse(LAkey.replace(/£/g, '"'));
+        var area_code = LAkey["area_code"];
+        var area_name = LAkey["area_name"];
+        var laSelect = '<select id="areaType" name="frmTypes" onChange="loadAreaList(this.value)" class="datasetSelect"><option value="{}">Select an area type</option>';
+        laSelect += '<option value="{£area_name£:£' + area_name + '£,£area_code£:£' + area_code + '£,£area_type£:£local Authority£}"';
+        laSelect += '>local Authority</option>';
+        laSelect += '<option value="{£area_name£:£' + area_name + '£,£area_code£:£' + area_code + '£,£area_type£:£ward£}"';
+        laSelect += '>ward</option>';
+        laSelect += '</select>';
+        var divf = document.createElement('div');
+        divf.innerHTML = laSelect;
+        document.getElementById("area type").innerHTML = "";
+        document.getElementById("area type").appendChild(divf);
+
+        nameObj["la"]=area_name;
+        nameObj["ward"]="";
+        nameObj["lsoa"]="";
+      }
+    }
+
+    function loadAreaList (LAkey){
+
+      document.getElementById("area").innerHTML=""
+      var LAkey=JSON.parse(LAkey.replace(/£/g, '"'));
+      var area_code = LAkey["area_code"];
+      var area_name = LAkey["area_name"];
+      var area_type = LAkey["area_type"];
+
+      if(area_type == "local Authority"){
+        key= '{"area_name":"' + area_name + '", "area_code":"' + area_code + '"}';
+        getBoundaries(key)
+      } else if (area_type == "ward"){
+        var query = 'SELECT DISTINCT ?area_code ?area_name '
+        query += 'WHERE {';
+        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "'+ area_code +'" .'
+        query += '?s <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/contains> ?areas .'
+        query += '?areas <http://statistics.data.gov.uk/def/statistical-entity#code> <http://statistics.data.gov.uk/id/statistical-entity/E05> .'
+        query += '?areas <http://www.w3.org/2004/02/skos/core#note> "Live" .'
+        query += '?areas <http://www.w3.org/2004/02/skos/core#notation> ?area_code .'
+        query += '?areas <http://www.w3.org/2000/01/rdf-schema#label> ?area_name .'
+        query += '}'
+
+        postQuery(query,endpointODC,function(d){popSelect(d,"area","getBoundaries")});
+      }
+    }
+
+    function getBoundaries(key) {
+      var key=JSON.parse(key.replace(/£/g, '"'));
+      var area_code = key["area_code"];
+      var area_name = key["area_name"];
+      var area_type = key["area_type"];
+      if (/^E01/.test(area_code)){
+        nameObj["lsoa"]=area_name;
+      }else if (/^E05/.test(area_code)){
+        nameObj["ward"]=area_name;
+        nameObj["lsoa"]="";
+      }else{
+        nameObj["la"]=area_name;
+        nameObj["ward"]="";
+        nameObj["lsoa"]="";
+      }
+      if (nameObj["la"]!="" && nameObj["ward"]!="" && nameObj["lsoa"]!=""){
+      nameToPrint=nameObj["lsoa"]+", "+nameObj["la"]
+      }
+      if (nameObj["la"]!="" && nameObj["ward"]!="" && nameObj["lsoa"]==""){
+      nameToPrint=nameObj["ward"]+", "+nameObj["la"]
+      }
+      if (nameObj["la"]!="" && nameObj["ward"]==""){
+      nameToPrint=nameObj["la"]
+      }
+      areaName=area_name
+      areaCode=area_code;
+
+      if (/^E05/.test(area_code)){
+
+        query = 'SELECT ?boundaryAsJsonP '
+        query += 'WHERE {'
+        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "' + area_code + '" .'
+        query += '?s <http://opendatacommunities.org/def/geography#boundaryAsJSONP> ?boundaryAsJsonP .}'
+        postQuery(query,endpointODC,processBoundaryAsJsonP);
+      }else{
+        var query = 'SELECT ?bnode ?as_WKT '
+        query += 'WHERE {'
+        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "' + area_code + '" .'
+        query += '?s <http://www.opengis.net/ont/geosparql#hasGeometry> ?bnode .'
+        query += '?bnode <http://www.opengis.net/ont/geosparql#asWKT> ?as_WKT . }'
+        postQuery(query,endpointODC,processWKTBoundary);
+      }
+    }
+
+    function processBoundaryAsJsonP(asJsonP){
+      var asJsonPURL=asJsonP.results.bindings[0].boundaryAsJsonP.value
+      script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = asJsonPURL
+      document.getElementsByTagName('head')[0].appendChild(script);
+      document.getElementsByTagName('head')[0].removeChild(script);
+
+    }
+    function parseResponse(geoData){
+      prepCoordsForDP(geoData.features[0])
+    }
+
+    function processWKTBoundary(boundary){
+
+      var arrayCoords=boundary.results.bindings[0].as_WKT.value.split(")),")
+
+      arrayCoords[0]=arrayCoords[0].split('(((')[1]
+
+      for (i=1;i<arrayCoords.length;i++){
+        arrayCoords[i]=arrayCoords[i].split('((')[1]
+      }
+
+      for (i=0;i<arrayCoords.length;i++){
+        arrayCoords[i]=arrayCoords[i].split(',')
+        for (j=0;j<arrayCoords[i].length;j++){
+          if (j>0){
+            arrayCoords[i][j]=arrayCoords[i][j].replace(/ /,'')
+          }
+          arrayCoords[i][j]=arrayCoords[i][j].split(" ")
+          arrayCoords[i][j][0]=parseFloat(arrayCoords[i][j][0])
+          arrayCoords[i][j][1]=parseFloat(arrayCoords[i][j][1])
+        }
+      }
+      var simpleGeoJson = {"type": "Feature","geometry": {
+        "type": "MultiPolygon",
+        "coordinates":[arrayCoords]
+      }}
+      prepCoordsForDP(simpleGeoJson)
+    }
+
+    function prepCoordsForDP(simpleGeoJson){
+
+      //boundaries for Police API,
+      var coordinatesArray = simpleGeoJson.geometry.coordinates[0];
+      var coordinatesStringArray = [];
+      for (i=0;i<coordinatesArray.length;i++){
+        var arrayLength = coordinatesArray[i].length
+        var coordinatesString = ""
+
+        for (var j = 0; j < arrayLength-1; j++) {
+          coordinatesString += coordinatesArray[i][j][1].toFixed(6) + ","
+          if (j==arrayLength-2){
+            coordinatesString += coordinatesArray[i][j][0].toFixed(6)
+          } else {
+            coordinatesString += coordinatesArray[i][j][0].toFixed(6) + ":"
+          }
+        }
+        coordinatesStringArray.push(coordinatesString)
+      }
+
+      boundaryGroup.clearLayers();
+      clusters.clearLayers();
+      boundary = L.geoJSON(simpleGeoJson,{style:{"color":"grey"}})
+      .addTo(boundaryGroup);
+      leafletMap.fitBounds(boundary.getBounds()); // adjust the zoom to fit the boundary to the screen size
+
+      var polyCount=coordinatesStringArray.length
+      responsesArray=[]
+      responses=0
+      partialObj=[]
+      for(i=0;i<polyCount;i++){
+        responsesArray.push([])
+        sendPoliceDataRequest(coordinatesStringArray[i],i,polyCount);
+      }
+    }
+
+    function sendPoliceDataRequest(coordinatesString,polyIndex,polyCount){
+
+      urlDP = "https://data.police.uk/api/crimes-street/"+categories[0].url+"s3?"
+      d3.select("#timeLine").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");
+      d3.select("#tableDiv").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");;
+      for (var i = 0; i < formatedDateArray.length; i++) {
+        data = "poly="+encodeURIComponent(coordinatesString)+"&date="+encodeURIComponent(formatedDateArray[i]);
+        partialObj[i]=[]
+        scheduleDataRequest(data,i,polyIndex,polyCount);
+      }
+    }
+
+    function scheduleDataRequest(data,dateIndex,polyIndex,polyCount){
+      var elemSelect=document.getElementsByClassName("datasetSelect")
+      Array.prototype.forEach.call(elemSelect,function(element) {
+        element.disabled=true;
+      });
+
+      document.getElementById("downloadCSV").style.pointerEvents="none";
+
+      if (/^E08000003/.test(areaCode) || /^E08000012/.test(areaCode)){
+        partialObj[polyIndex][dateIndex]={index:dateIndex,crimeObj:[],count:0}
+        for (var j = 1; j<categories.length; j++){
+          urlDPcat = "https://data.police.uk/api/crimes-street/"+categories[j].url+"?";
+          reScheduleDataRequest(data,urlDPcat,dateIndex,polyIndex,polyCount)
+        }
+      }else{
+        labAjax(urlDP,function(d){
+          responsesArray[polyIndex].push([d,dateIndex]);
+
+          if (responsesArray[polyIndex].length==formatedDateArray.length){responses=responses+1}
+          if (fail==false)statusBar()
+          if (responses==polyCount){
+            if(fail==false){
+              produceGeoJson(responsesArray)
+            }else{
+              alert("Incomplete or missing response from the server, please try again. If the problem persists try later.");
+              fail==false;
+              var elemSelect=document.getElementsByClassName("datasetSelect")
+              Array.prototype.forEach.call(elemSelect,function(element) {
+                element.disabled=false;
+              });
+              document.getElementById("downloadCSV").style.pointerEvents="auto"
+            }
+          }
+        },{ data:data, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}], unsuccessfulRequest: testForUnsuccesful})
+      }
+    }
+
+    function reScheduleDataRequest(data,url,dateIndex,polyIndex,polyCount){
+      labAjax(url,function(d){
+        if (fail==false){
+          partialObj[polyIndex][dateIndex].count=partialObj[polyIndex][dateIndex].count+1;
+          if (d === null){
+            unavailableData.push({month:i,category:j})
+          }else{
+            partialObj[polyIndex][dateIndex].crimeObj=partialObj[polyIndex][dateIndex].crimeObj.concat(d);
+          }
+          if (partialObj[polyIndex][dateIndex].count==categories.length-1){
+            responsesArray[polyIndex].push([partialObj[polyIndex][dateIndex].crimeObj,dateIndex])
+
+            if (responsesArray[polyIndex].length==formatedDateArray.length){responses=responses+1}
+            if(fail==false)statusBar()
+            if (responses==polyCount){
+              if(fail==false){
+                produceGeoJson(responsesArray)
+              }else{
+                alert("Incomplete or missing response from the server, please try again. If the problem persists try later.");
+                fail==false;
+                var elemSelect=document.getElementsByClassName("datasetSelect")
+                Array.prototype.forEach.call(elemSelect,function(element) {
+                  element.disabled=false;
+                })
+                document.getElementById("downloadCSV").style.pointerEvents="auto"
+              }
+            }
+          }
+        }
+      },{ data:data, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}], unsuccessfulRequest: testForUnsuccesful})
+    }
+
+    function testForUnsuccesful(request){
+      fail=true
+    }
+
+    function produceGeoJson(arrApiData){
+      for (i=0;i<arrApiData.length;i++){
+        arrApiData[i].sort(function(a, b) {
+          return a[1] - b[1];
+        });
+      }
+      for (i=0;i<formatedDateArray.length;i++){
+        for (j=1;j<arrApiData.length;j++){
+          arrApiData[0][i][0]=arrApiData[0][i][0].concat(arrApiData[j][i][0])
+        }
+      }
+      var arrApiDataMP=arrApiData[0]
+
+      updateURL()
+      monthViz=0
+      categoryViz=0
+      var element = document.getElementById("selectDate");
+      element.value=monthViz
+      var element = document.getElementById("selectCategory");
+      element.value=categoryViz
+      geojsonArray=[]//geojson array
+      arrayCounts=[]
+
+      var counterObj={}
+      stringCSV="area_code,area_name,date,category,count"
+      for (var c = 0; c <categories.length; c++) {
+        counterObj[categories[c].name] = []
+      }
+
+      //iterating over each month
+      for (var i = 0; i < arrApiDataMP.length; i++) { //i is the date index
+        var geoJsonMonth = []
+        var countsMonth = []
+
+        for (var c = 0; c <categories.length; c++) {
+          counterObj[categories[c].name].push({serie: categories[c].name, date: formatedDateArray[i], value: 0})
+        }
+
+        //iterate over each crime
+        for (var j = 0; j < arrApiDataMP[i][0].length; j++) { //j is the crime number
+          var  crimeObj = {
+            "type": "Feature",
+            "properties": {"category": ""},
+            "geometry": {
+              "type": "Point",
+              "coordinates": [parseFloat(arrApiDataMP[i][0][j].location.longitude),parseFloat(arrApiDataMP[i][0][j].location.latitude)]
+            }
+          }
+
+          for (var c = 0; c<categories.length; c++){
+            if (categories[c].url==arrApiDataMP[i][0][j].category){
+              if (categories[c].name=="Anti-social behaviour"){
+                counterObj[categories[c].name][i].value=counterObj[categories[c].name][i].value+1
+                crimeObj.properties.category="Anti-social behaviour";
+              } else {
+                counterObj[categories[c].name][i].value=counterObj[categories[c].name][i].value+1
+                counterObj[categories[0].name][i].value=counterObj[categories[0].name][i].value+1
+                crimeObj.properties.category=categories[c].name;
+              }
+              break;
+            }
+          }
+          geoJsonMonth.push(crimeObj)
+        }
+        for (var c = 0; c<categories.length; c++){
+          stringCSV+="\n"+areaCode+","+areaName+","+formatedDateArray[i]+","+categories[c].name+","+counterObj[categories[c].name][i].value+""
+        }
+        geojsonArray.push(geoJsonMonth)
+      }
+
+      document.getElementById("progressBar").style.width = '0%';
+
+      arrayCounts=[counterObj]
+      produceMap();
+      produceTimeline();
+      callHorizontalBarChart();
+      produceSummaryStatistics();
+      mainContent.classList.remove("nonVisible");
+
+      var elemSelect=document.getElementsByClassName("datasetSelect")
+      Array.prototype.forEach.call(elemSelect,function(element) {
+        element.disabled=false;
+      });
+      document.getElementById("downloadCSV").style.pointerEvents="auto"
+
+    }
+
+    function updateCategory(category){
+      categoryViz=category;
+      produceMap()
+      produceTimeline()
+      produceSummaryStatistics()
+      callHorizontalBarChart()
+    }
+
+    function updateDates(dateObj){
+      monthViz=parseInt(dateObj);
+      produceMap()
+      produceTimeline()
+      callHorizontalBarChart()
+    }
+
+    function updateURL(){
+      //var keyName=nameToPrint
+      if (/E05/.test(areaCode) ){
+        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?code='+areaCode+'&name='+ encodeURIComponent(areaName) + '&within=' + encodeURIComponent(nameObj['la']);
+      }else if (!/E01/.test(areaCode) ){
+        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?code='+areaCode+'&name='+ encodeURIComponent(areaName);
+      }
+
+      window.history.pushState({path:newurl},'',newurl);
+    }
+
+    function produceMap(){
+      //leaflet clustered map
+
+      document.getElementById('areaName').innerHTML=nameToPrint
+      document.getElementById('mapTitle').innerHTML="Reports of "+ categories[categoryViz].name + ", "+formatTimeC(parseTime(formatedDateArray[monthViz]))
+      clusters.clearLayers();
+      //show recent month
+      var geojsonMarkerOptions = {
+        color: 'white',
+        opacity: 0.8,
+        weight: 1,
+        fillColor: "#fc6721",
+        fillOpacity: 0.8,
+        radius: 5
+      };
+
+      L.geoJson(geojsonArray[monthViz], {filter: filterCategory, pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+      }}).addTo(clusters)//.addTo(leafletMap);
+      leafletMap.addLayer(clusters);
+
+      function filterCategory(feature) {
+        if (feature.properties.category === categories[categoryViz].name) return true
+        else if (categories[categoryViz].name === "All crime"){
+          if (!(feature.properties.category === "Anti-social behaviour")) return true
+        }
+      }
+    }
+
+    function produceTimeline(){
+
+      var formatTime = "%Y-%m";
+      var plotParams={data:[arrayCounts[0][categories[categoryViz].name]],
+        formatTime:formatTime,
+        container:"#timeLine",
+        palette:["#fc6721"],
+        title:"Number of incidents over the past three years, "+ areaName + ".",
+        ytitle:"Count",
+        clickFunction:clickDate,
+        ytickFormat:"integer",
+        markClick:true,
+        indexToMark:monthViz,
+        height: 400,
+        weight:800
+      }
+      document.getElementById('timeLine').innerHTML = "";
+      var svg=timeSeries(plotParams)
+
+      var filter = d3.select('#timeLine').select('svg').append("defs")
+      .append("filter")
+      .attr('id','desaturate')
+      .append('feColorMatrix')
+      .attr('type','matrix')
+      .attr('values',"0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 ");
+    }
+
+    function popSelect(data,container,onChangeFun){
+      var laNames = data.results.bindings;
+
+      laNames.sort(function(a, b){
+        if(a["area_name"]["value"] < b["area_name"]["value"]) { return -1; }
+        if(a["area_name"]["value"] > b["area_name"]["value"]) { return 1; }
+        return 0;
+      })
+      if (/E05/.test(laNames[0]["area_name"]["value"])){
+        for (var i = 0; i < laNames.length; i++) {
+          var regexp=new RegExp(laNames[i]["area_name"]["value"].slice(-10),'g')
+          laNames[i]["area_name"]["value"]=laNames[i]["area_name"]["value"].replace(regexp,"")
+        }
+      }
+
+      var laSelect = '<select id="'+ onChangeFun + '" name="'+ onChangeFun + '" onChange="' + onChangeFun + '(this.value)" class="datasetSelect"><option value="{}">Select ' + container + '</option>';
+
+      for (var i = 0; i < laNames.length; i++) {
+        laSelect += '<option value="{£area_name£:£' + laNames[i]["area_name"]["value"] + '£,£area_code£:£' + laNames[i]["area_code"]["value"] + '£}"';
+        laSelect += '>' + laNames[i]["area_name"]["value"] + '</option>';
+      }
+      laSelect += '</select>';
+      var divf = document.createElement('div');
+      divf.innerHTML = laSelect;
+      document.getElementById(container).innerHTML = "";
+      document.getElementById(container).appendChild(divf);
+    }
+
+    function popSelectDates(dataArray,container,onChangeFun){
+      var selectDate = '<select id="selectDate" name="selectDate" onChange="' + onChangeFun + '(this.value)" class="datasetSelect">'
+      for (var i = 0; i < dataArray.length; i++) {
+        selectDate += '<option value="'+i+'"';
+        selectDate += '>' + formatTimeC(parseTime(formatedDateArray[i])) + '</option>';
+      }
+      selectDate += '</select>';
+      var divf = document.createElement('div');
+      divf.innerHTML = selectDate;
+      document.getElementById(container).innerHTML = "";
+      document.getElementById(container).appendChild(divf);
+    }
+
+    function getCategories(){
+      var dataCategoriesDate="https://data.police.uk/api/crime-categories?date="+lastUpdate
+      labAjax(dataCategoriesDate,function(d){
+        categories=d;
+        readURLData();
+        popSelectCategories()
+        document.getElementById('selectCategory').disabled=true
+      },{data:dataCategoriesDate, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}]})
+    }
+
+    function popSelectCategories(){
+      var selectDate = '<select id="selectCategory" name="selectCategory" onChange="updateCategory(this.value)" class="datasetSelect">'
+      for (var i = 0; i < categories.length; i++) {
+        selectDate += '<option value="'+i+'"';
+        selectDate += '>' + categories[i]["name"] + '</option>';
+      }
+      selectDate += '</select>';
+      var divf = document.createElement('div');
+      divf.innerHTML = selectDate;
+      document.getElementById("crime categories").innerHTML = "";
+      document.getElementById("crime categories").appendChild(divf);
+    }
+
+    function callHorizontalBarChart(){
+      document.getElementById('cases').innerHTML=numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]+arrayCounts[0][categories[1]["name"]][monthViz]["value"])
+      document.getElementById('crimeTotal').innerHTML="From the cases recorded, "+ numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]) +" were crimes and "+ numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"]) + " were anti-social-behaviour incidents."
+
+      document.getElementById('tableDiv').innerHTML = "";
+      var arrayBarchart = []
+      for (var i = 2; i < categories.length; i++) {
+        arrayBarchart.push({name:categories[i]["name"],value:arrayCounts[0][categories[i]["name"]][monthViz]["value"]})
+      }
+      var barChartParams={data:arrayBarchart,
+        container:"#tableDiv",
+        barColour:"white",
+        markClick:true,
+        title:"Counts per crime category, "+ areaName + ", "+formatTimeC(parseTime(formatedDateArray[monthViz]))+".",
+        clickFunction:clickCategory,
+        indexToMark:categoryViz
+      }
+
+      var svg=horizontalBarChart(barChartParams)
+
+      var filter = d3.select('#tableDiv').select('svg').append("defs")
+      .append("filter")
+      .attr('id','desaturate')
+      .append('feColorMatrix')
+      .attr('type','matrix')
+      .attr('values',"0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 ");
+    }
+
+    function produceSummaryStatistics(){
+
+      if (/^E05/.test(areaCode)) {
+        LSOAsLink()
+      } else if (!/^E01/.test(areaCode)) {
+        document.getElementById("LSOA4Ward").innerHTML=""
+      }
+
+
+        //last available month with same month last year
+        var lastMonth=arrayCounts[0][categories[categoryViz].name][0].value
+        var prevMonth=arrayCounts[0][categories[categoryViz].name][12].value
+        var lastYear=0
+        var prevYear=0
+        for(i=0;i<12;i++){
+          lastYear+=arrayCounts[0][categories[categoryViz].name][i].value
+          prevYear+=arrayCounts[0][categories[categoryViz].name][i+12].value
+        }
+        var yearChange=(lastYear-prevYear)/prevYear*100
+        var monthChange=(lastMonth-prevMonth)/prevMonth*100
+
+        var monthComment=""
+        if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
+          monthComment= "There were " + numFormat (lastMonth) + " incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevMonth) + " incidents in the same month last year.</br>"
+        } else if (monthChange>0){
+          monthComment= "There were " + Math.abs(monthChange.toFixed(1)) + "% more incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastMonth) +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
+        } else if (monthChange<0){
+          monthComment= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastMonth) +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
+        } else if (monthChange==0){
+          monthComment= "There were the same number of incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ lastMonth +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
+        } else {
+          monthComment= "There were " + numFormat(lastMonth) + " incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevMonth) + " incidents in the same month last year.</br>"
+        }
+
+        var yearComment=""
+        if(yearChange == Number.POSITIVE_INFINITY || yearChange == Number.NEGATIVE_INFINITY || yearChange == NaN){
+          yearComment= "There were " + numFormat(lastYear) + " incidents in the past 12 months from " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevYear) + " incidents in the previous 12-months period.</br>"
+        } else if (yearChange>0){
+          yearComment= "There were " + Math.abs(yearChange.toFixed(1)) + "% more incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases).</br>"
+        } else if (yearChange<0){
+          yearComment= "There were " + Math.abs(yearChange.toFixed(1)) + "% fewer incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases)</br>"
+        } else if (yearChange==0){
+          yearComment= "There were the same number of incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases)</br>"
+        } else {
+          yearComment= "There were " + numFormat(lastYear) + " incidents in the past 12 months from " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevYear) + " incidents in the previous 12-months period.</br>"
+        }
+        document.getElementById("monthSummary").innerHTML=monthComment;
+        document.getElementById("yearSummary").innerHTML=yearComment;
+
+}
+
+function clickDate(e,d){
+  for (var i=0;i < formatedDateArray.length;i++){
+    if (formatedDateArray[i]==d.date){
+      monthViz=i;
+      produceMap()
+      callHorizontalBarChart()
+      var element = document.getElementById("selectDate");
+      element.value=monthViz
+      break;
+    }
+  }
+}
+
+function clickCategory(e,d){
+  for (var i = 0; i < categories.length; i++){
+    if (categories[i].name==d.name){
+      categoryViz = i
+      produceMap()
+      produceTimeline()
+      produceSummaryStatistics()
+      var element = document.getElementById("selectCategory");
+      element.value = categoryViz
+    }
+  }
+}
+
+function postQuery(query, url, callback){
+  query="query="+encodeURIComponent(query)
+  labAjax(url,callback,{ data:query, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}] });
+}
+
+function createCSV(){
+
+  var download = function(content, fileName, mimeType) {
+    var a = document.createElement('a');
+    mimeType = mimeType || 'application/octet-stream';
+
+    if (navigator.msSaveBlob) { // IE10
+      navigator.msSaveBlob(new Blob([content], {
+        type: mimeType
+      }), fileName);
+    } else if (URL && 'download' in a) { //html5 A[download]
+      a.href = URL.createObjectURL(new Blob([content], {
+        type: mimeType
+      }));
+      a.setAttribute('download', fileName);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+    }
+  }
+  download(stringCSV, 'Crime-Data.csv', 'text/csv;encoding:utf-8');
+}
+
+function readURLData(){
+  var code=labGetQryStrValByKey("code")
+  var name=labGetQryStrValByKey("name")
+  var within = (labGetQryStrValByKey("within")) ? labGetQryStrValByKey("within"):"";
+  nameToPrint=name;
+  nameObj["la"]=within
+
+  if (/^E0/.test(code)){
+    getBoundaries('{"area_name":"' + name + '", "area_code":"' + code + '"}')
+  }
+}
+
+function statusBar(){
+  var monthResp=0
+  for (var i = 0; i < responsesArray.length; i++){
+    monthResp=monthResp+responsesArray[i].length
+  }
+  var width=monthResp*100/(36*responsesArray.length);
+  var pBar=document.getElementById("progressBar")
+  pBar.style.width = width + '%';
+}
+
+function LSOAsLink(){
+  d3.json("https://raw.githubusercontent.com/traffordDataLab/crime_radar/master/best_fit_lookup.json?token=Ae5QXZkNOYZx7mh1TrEpmrd4cISdLWXIks5b9C_WwA%3D%3D", function(error, lookUp) {
+
+    if (lookUp[areaCode]){
+      document.getElementById("LSOA4Ward").innerHTML="<div class='left'>Looking for <a onclick='showLSOASelect()'>LSOAs</a>?</div><div id='LSOA' class='left'></div>"
+
+var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
+
+for (var i = 0; i < lookUp[areaCode].length; i++) {
+  LSOASelect += '<option value="{£area_name£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_code£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_type£:£LSOA£}"';
+  LSOASelect += '>' + lookUp[areaCode][i]["lsoa11cd"] + '</option>';
+}
+LSOASelect += '</select>';
+var divf = document.createElement('div');
+divf.innerHTML = LSOASelect;
+document.getElementById("LSOA").innerHTML = "";
+document.getElementById("LSOA").appendChild(divf);
+var elem=document.getElementById("LSOA");
+elem.classList.add("nonVisible");
+
+
+    }else{
+      document.getElementById("LSOA4Ward").innerHTML=""
+    }
+
+})
+}
+
+function showLSOASelect(){
+  var LSOADiv = document.getElementById("LSOA");
+  LSOADiv.classList.remove("nonVisible");
+}
+
+function LSOApopup(){
+
+    var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
+
+    for (var i = 0; i < lookUp[areaCode].length; i++) {
+      LSOASelect += '<option value="{£area_name£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_code£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_type£:£LSOA£}"';
+      LSOASelect += '>' + lookUp[areaCode][i]["lsoa11cd"] + '</option>';
+    }
+    LSOASelect += '</select>';
+    var divf = document.createElement('div');
+    divf.innerHTML = LSOASelect;
+    document.getElementById("LSOA").innerHTML = "";
+    document.getElementById("LSOA").appendChild(divf);
+}
+
+</script>
+</body>
+</html>
