@@ -1,5 +1,5 @@
 ## About
-Crime radar allows you to interactively visualise street level crime and anti-social behaviour (ASB) incidents in your area. You can filter counts of crime and ASB over the last three years and see the results in linked visualisations.
+Crime Scanner allows you to interactively visualise street level crime and anti-social behaviour (ASB) incidents in your area. You can filter counts of crime and ASB over the last three years and see the results in linked visualisations.
 
 #### Data 
 The application retrieves police recorded crime and incidents of anti-social behaviour in England from [data.police.uk](https://data.police.uk/). Thirteen different [crime categories](https://www.police.uk/about-this-site/faqs/#what-do-the-crime-categories-mean) are available. Crime and anti-social behaviour incidents can be filtered by Local Authority District, Electoral ward and [best-fitting](http://geoportal.statistics.gov.uk/datasets/500d4283cbe54e3fa7f358399ba3783e_0) Lower-layer Super Output Area (LSOA) levels. 
