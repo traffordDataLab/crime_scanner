@@ -15,20 +15,29 @@
   <style>
   html, body
   {
-    padding: 0 20px 5em 12px;
+    padding: 5px 20px 5em 12px;
   }
   h3
   {
     margin:0px;
-    padding: 5px 0px;
+    padding: 0px 0px 10px 0px;
   }
   .leaflet-control-attribution a
   {
     color: #fc6721;
   }
+  #logo
+  {
+    display: inline-block;
+    float:left ;
+    padding-right: 5px;
+  }
   #title
   {
     font-size: 25px;
+    float:left ;
+    display: inline-block;
+    color: #757575;
   }
   #map
   {
@@ -71,11 +80,15 @@
   }
   .fontS
   {
-    font-size: 12px;
+    font-size: 13px;
   }
   .fontSS
   {
     font-size: 10px;
+  }
+  .padded
+  {
+    padding-bottom:10px;
   }
   #downloadCSV, #LSOAbutton
   {
@@ -87,6 +100,10 @@
     border-top: 1px solid gray;
     margin-top: 0px;
     padding-top: 10px;
+  }
+  #focusTitle
+  {
+font-size: 17px
   }
   #dates
   {
@@ -112,6 +129,13 @@
   .nonVisible
   {
     opacity: 0;
+  }
+  #credits
+  {
+    background-color: #f0f0f0;
+    font-size: 12px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
   @media (max-width:800px)
   {
@@ -153,17 +177,21 @@
   </style>
   </head>
   <body>
-    <div id='title'>Crime scanner</div>
-    <div class='clearb'>
-      <div class='clearb'>
-        <div id='region'></div>
-        <div id='local Authority'></div>
+      <div>
+        <div id='logo'><a id="CSlogo" href="https://www.trafforddatalab.io/index.html" target="_blank"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
+        <div id='title'>Crime scanner</div>
       </div>
-      <div class='clearb'>
-        <div id='area type'></div>
-        <div id='area'></div>
-      </div>
-    </div>
+        <div class='clearb'>
+          <div class='clearb'>
+            <div id='region'></div>
+            <div id='local Authority'></div>
+          </div>
+          <div class='clearb'>
+            <div id='area type'></div>
+            <div id='area'></div>
+          </div>
+        </div>
+
 
     <div id="progressBar" class="clearb"></div>
 
@@ -173,16 +201,12 @@
           <h3 id='areaName'></h3>
           <div class='clearb fontS'>
             <div id='summary' class="clearb fontS">
-              <div class="left"> There were <span id='cases'></span> incidents recorded by the police on </div> <div id='dates'></div>
-              <ul>
-                <li id="crimeTotal" class="clearb fontS"></li>
-              </ul>
+              <div id='summarySentence' class="left padded"></div><div id='dates'></div>
             </div>
-            <div class="left">The change on number of incidents for category </div><div id='crime categories'></div>
-            <ul class="clearb fontS">
-              <li id='monthSummary'></li>
-              <li id='yearSummary'></li>
-            </ul>
+            <div class="clearb">
+              <div id="focusTitle" class="left padded header">Focus on </div><div id='crime categories'></div>
+            </div>
+            <div id="focusOn" class="clearb fontS"></div>
             <p>Click on the charts to change the category or month displayed.</p>
             <div id='LSOA4Ward'></div>
             <p class="clearb">Download <span id='downloadCSV' class="labButton" onclick="createCSV()"> CSV </span></p>
@@ -204,6 +228,13 @@
           <div class="fontSS">*Locations are only an <a href="https://data.police.uk/about/#location-anonymisation">approximation</a> of where the actual crimes occurred.</div>
         </div>
       </div>
+
+
+    </div>
+    <div id="credits" class='clearb'>
+      <p>Powered by <a href="https://www.gov.uk/government/organisations/home-office">data.police.uk</a>.
+        Population from mid-2017 <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">population estimates</a> from the Office for National Statistics.
+        All information used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>. Find more information about <a href="">Crime Scanner</a></p>
     </div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
@@ -242,12 +273,13 @@
     var numFormat = d3.format(",");
     var stringCSV = ""
     var fail=false
+    var population=0
 
     if (location.protocol == 'https:')
     location.href = location.href.replace(/^https:/, 'http:')
 
-window.onpopstate = function(event) {
-  window.location.reload(true)
+    window.onpopstate = function(event) {
+      window.location.reload(true)
 };
 
     getLastUpdateDate()
@@ -321,9 +353,7 @@ window.onpopstate = function(event) {
         query += "?s <http://publishmydata.com/def/ontology/foi/code> ?area_code . }"
 
         postQuery(query,endpointODC,function(d){popSelect(d,"local Authority","loadAreas")});
-
       }
-
     }
 
     function loadAreas (LAkey) {
@@ -415,11 +445,7 @@ window.onpopstate = function(event) {
 
       if (/^E05/.test(area_code)){
 
-        query = 'SELECT ?boundaryAsJsonP '
-        query += 'WHERE {'
-        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "' + area_code + '" .'
-        query += '?s <http://opendatacommunities.org/def/geography#boundaryAsJSONP> ?boundaryAsJsonP .}'
-        postQuery(query,endpointODC,processBoundaryAsJsonP);
+        processJson()
       }else{
         var query = 'SELECT ?bnode ?as_WKT '
         query += 'WHERE {'
@@ -430,15 +456,12 @@ window.onpopstate = function(event) {
       }
     }
 
-    function processBoundaryAsJsonP(asJsonP){
-      var asJsonPURL=asJsonP.results.bindings[0].boundaryAsJsonP.value
-      script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = asJsonPURL
-      document.getElementsByTagName('head')[0].appendChild(script);
-      document.getElementsByTagName('head')[0].removeChild(script);
+    function processJson(){
 
+      var jsonURL="http://statistics.data.gov.uk/boundaries/"+ areaCode +".json"
+      d3.json(jsonURL, function(error, geoData) {prepCoordsForDP(geoData)})
     }
+
     function parseResponse(geoData){
       prepCoordsForDP(geoData.features[0])
     }
@@ -668,7 +691,8 @@ window.onpopstate = function(event) {
       produceMap();
       produceTimeline();
       callHorizontalBarChart();
-      produceSummaryStatistics();
+      getPopulation()
+      //produceSummaryStatistics();
       mainContent.classList.remove("nonVisible");
 
       var elemSelect=document.getElementsByClassName("datasetSelect")
@@ -692,6 +716,7 @@ window.onpopstate = function(event) {
       produceMap()
       produceTimeline()
       callHorizontalBarChart()
+      produceSummaryStatistics()
     }
 
     function updateURL(){
@@ -805,7 +830,13 @@ window.onpopstate = function(event) {
     function getCategories(){
       var dataCategoriesDate="https://data.police.uk/api/crime-categories?date="+lastUpdate
       labAjax(dataCategoriesDate,function(d){
+
         categories=d;
+          categories.sort(function(a, b) {
+            if(a["name"] < b["name"]) { return -1; }
+            if(a["name"] > b["name"]) { return 1; }
+            return 0;
+          });
         readURLData();
         popSelectCategories()
         document.getElementById('selectCategory').disabled=true
@@ -826,8 +857,6 @@ window.onpopstate = function(event) {
     }
 
     function callHorizontalBarChart(){
-      document.getElementById('cases').innerHTML=numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]+arrayCounts[0][categories[1]["name"]][monthViz]["value"])
-      document.getElementById('crimeTotal').innerHTML="From the cases recorded, "+ numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]) +" were crimes and "+ numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"]) + " were anti-social-behaviour incidents."
 
       document.getElementById('tableDiv').innerHTML = "";
       var arrayBarchart = []
@@ -855,52 +884,69 @@ window.onpopstate = function(event) {
 
     function produceSummaryStatistics(){
 
-      if (/^E05/.test(areaCode)) {
-        LSOAsLink()
-      } else if (!/^E01/.test(areaCode)) {
-        document.getElementById("LSOA4Ward").innerHTML=""
-      }
+        document.getElementById("summarySentence").innerHTML='There were ' + numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]) + ' crimes and ' + numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"]) + ' incidents of anti-social behaviour reported during';
 
-
-        //last available month with same month last year
-        var lastMonth=arrayCounts[0][categories[categoryViz].name][0].value
-        var prevMonth=arrayCounts[0][categories[categoryViz].name][12].value
-        var lastYear=0
-        var prevYear=0
-        for(i=0;i<12;i++){
-          lastYear+=arrayCounts[0][categories[categoryViz].name][i].value
-          prevYear+=arrayCounts[0][categories[categoryViz].name][i+12].value
+        var thisMonth=arrayCounts[0][categories[categoryViz].name][monthViz].value
+        var prevMonth=0
+        var rateString=""
+        if (population>0 && thisMonth>0){
+          rateString="(" + (thisMonth/population*1000).toFixed(1) + " per 1,000 residents)"
         }
-        var yearChange=(lastYear-prevYear)/prevYear*100
-        var monthChange=(lastMonth-prevMonth)/prevMonth*100
-
-        var monthComment=""
-        if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
-          monthComment= "There were " + numFormat (lastMonth) + " incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevMonth) + " incidents in the same month last year.</br>"
-        } else if (monthChange>0){
-          monthComment= "There were " + Math.abs(monthChange.toFixed(1)) + "% more incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastMonth) +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
-        } else if (monthChange<0){
-          monthComment= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastMonth) +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
-        } else if (monthChange==0){
-          monthComment= "There were the same number of incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " ("+ lastMonth +" cases) compared to the same month last year ("+ numFormat(prevMonth) +" cases).</br>"
-        } else {
-          monthComment= "There were " + numFormat(lastMonth) + " incidents in " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevMonth) + " incidents in the same month last year.</br>"
+        var noun="offences"
+        if (categoryViz==1){
+          noun="incidents"
         }
+        var focusOnP1="<p>"+thisMonth+" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+" .</p>"
+        //last available month with same month last year/
+        var focusOnP2=""
+        if (!(categoryViz==0 || categoryViz==1)){
+          var perOfTotal=arrayCounts[0][categories[categoryViz].name][monthViz].value/arrayCounts[0][categories[0].name][monthViz].value*100
 
-        var yearComment=""
-        if(yearChange == Number.POSITIVE_INFINITY || yearChange == Number.NEGATIVE_INFINITY || yearChange == NaN){
-          yearComment= "There were " + numFormat(lastYear) + " incidents in the past 12 months from " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevYear) + " incidents in the previous 12-months period.</br>"
-        } else if (yearChange>0){
-          yearComment= "There were " + Math.abs(yearChange.toFixed(1)) + "% more incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases).</br>"
-        } else if (yearChange<0){
-          yearComment= "There were " + Math.abs(yearChange.toFixed(1)) + "% fewer incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases)</br>"
-        } else if (yearChange==0){
-          yearComment= "There were the same number of incidents in the past 12 months from " + formatTimeB(parseTime(formatedDateArray[0])) + " ("+ numFormat(lastYear) +" cases) compared to the previous 12-months period ("+ numFormat(prevYear) +" cases)</br>"
-        } else {
-          yearComment= "There were " + numFormat(lastYear) + " incidents in the past 12 months from " +formatTimeB(parseTime(formatedDateArray[0])) + " whilst there were " + numFormat(prevYear) + " incidents in the previous 12-months period.</br>"
+          if (perOfTotal>0){
+            focusOnP2="<p>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime.</p>"
+          }
+
         }
-        document.getElementById("monthSummary").innerHTML=monthComment;
-        document.getElementById("yearSummary").innerHTML=yearComment;
+        var focusOnP3="<p>"
+        if(monthViz<24){
+        prevMonth=arrayCounts[0][categories[categoryViz].name][monthViz+12].value
+        var monthChange=(thisMonth-prevMonth)/prevMonth*100
+              if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
+                focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
+              } else if (monthChange>0){
+                focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% more "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
+              } else if (monthChange<0){
+                focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
+              } else if (monthChange==0){
+                focusOnP3+= "There were the same number of "+ noun +" than the same month last year (n = "+ numFormat(prevMonth) +")"
+              } else {
+                focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
+              }
+
+              if(monthViz<12){
+                var lastYear=0
+                var prevYear=0
+                for(i=monthViz;i<monthViz+12;i++){
+                  lastYear+=arrayCounts[0][categories[categoryViz].name][i].value
+                  prevYear+=arrayCounts[0][categories[categoryViz].name][i+12].value
+                }
+                var yearChange=(lastYear-prevYear)/prevYear*100
+
+                if(yearChange == Number.POSITIVE_INFINITY || yearChange == Number.NEGATIVE_INFINITY || yearChange == NaN){
+                  focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
+                } else if (yearChange>0){
+                  focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% more over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+                } else if (yearChange<0){
+                  focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% fewer over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+                } else if (yearChange==0){
+                  focusOnP3+= ", and the same over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+                } else {
+                  focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
+                }
+              }
+        }
+        focusOnP3+=".</p>"
+        document.getElementById("focusOn").innerHTML=focusOnP1+focusOnP2+focusOnP3
 
 }
 
@@ -910,6 +956,7 @@ function clickDate(e,d){
       monthViz=i;
       produceMap()
       callHorizontalBarChart()
+      produceSummaryStatistics()
       var element = document.getElementById("selectDate");
       element.value=monthViz
       break;
@@ -969,6 +1016,11 @@ function readURLData(){
 
   if (/^E0/.test(code)){
     getBoundaries('{"area_name":"' + name + '", "area_code":"' + code + '"}')
+  }else{
+    //code=E05000825&name=Clifford&within=Trafford
+    nameToPrint="Clifford";
+    nameObj["la"]="Trafford";
+    getBoundaries('{"area_name":"Clifford", "area_code":"E05000825"}')
   }
 }
 
@@ -983,7 +1035,7 @@ function statusBar(){
 }
 
 function LSOAsLink(){
-  d3.json("https://raw.githubusercontent.com/traffordDataLab/crime_radar/master/best_fit_lookup.json?token=Ae5QXZkNOYZx7mh1TrEpmrd4cISdLWXIks5b9C_WwA%3D%3D", function(error, lookUp) {
+  d3.json("http://www.trafforddatalab.io/crime_scanner/best_fit_lookup.json", function(error, lookUp) {
 
     if (lookUp[areaCode]){
       document.getElementById("LSOA4Ward").innerHTML="<div class='left'>Looking for <a onclick='showLSOASelect()'>LSOAs</a>?</div><div id='LSOA' class='left'></div>"
@@ -1030,6 +1082,22 @@ function LSOApopup(){
     document.getElementById("LSOA").appendChild(divf);
 }
 
+function getPopulation(){
+  d3.json("http://www.trafforddatalab.io/crime_scanner/population.json", function(error, populationArray) {
+
+    if(populationArray[areaCode]){
+      population=populationArray[areaCode]["population"]
+    }else{
+      population=0
+    }
+    produceSummaryStatistics()
+})
+if (/^E05/.test(areaCode)) {
+  LSOAsLink()
+} else if (!/^E01/.test(areaCode)) {
+  document.getElementById("LSOA4Ward").innerHTML=""
+}
+}
 </script>
 </body>
 </html>
