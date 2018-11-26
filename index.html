@@ -58,13 +58,17 @@
   _:-ms-fullscreen, :root #timeLine, #tableDiv{
     height:20vw;
   }
-  #region, div[id="local Authority"], div[id="area type"], #area, div[id="crime categories"], #dates
+  #region, div[id="Local Authority"], div[id="area type"], #area, div[id="crime categories"]
   {
     float: left;
   }
   #crimeTotal{
     padding: 0px;
     margin: 0px;
+  }
+  #areaName
+  {
+    padding-bottom: 20px;
   }
   .clearb{
     clear: both;
@@ -86,7 +90,7 @@
   }
   .fontS
   {
-    font-size: 13px;
+    font-size: 14px;
   }
   .fontSS
   {
@@ -94,7 +98,7 @@
   }
   .padded
   {
-    padding-bottom:10px;
+    padding-bottom:1px;
   }
   #downloadCSV, #LSOAbutton
   {
@@ -109,11 +113,23 @@
   }
   #focusTitle
   {
-font-size: 17px
+    font-size: 17px
   }
-  #dates
+  #summarySentence div
   {
     display: inline;
+  }
+  #summary
+  {
+    padding-bottom: 20px;
+  }
+  .sList
+  {
+    padding-bottom: 6px
+  }
+  .sList li
+  {
+    padding-top: 10px;
   }
   #mapTitle
   {
@@ -140,8 +156,7 @@ font-size: 17px
   {
     background-color: #f0f0f0;
     font-size: 12px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px 20px;
   }
   @media (max-width:800px)
   {
@@ -181,66 +196,60 @@ font-size: 17px
     }
   }
   </style>
-  </head>
-  <body>
-      <div>
-        <div id='logo'><a id="CSlogo" href="https://www.trafforddatalab.io/index.html" target="_blank"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
-        <div id='title'>Crime scanner</div>
-      </div>
-        <div class='clearb'>
-          <div class='clearb'>
-            <div id='region'></div>
-            <div id='local Authority'></div>
-          </div>
-          <div class='clearb'>
-            <div id='area type'></div>
-            <div id='area'></div>
-          </div>
-        </div>
-
-
-    <div id="progressBar" class="clearb"></div>
-
-    <div id="mainC" class="main clearb">
-      <div id='up' class="clearb">
-        <div class="left w50">
-          <h3 id='areaName'></h3>
-          <div class='clearb fontS'>
-            <div id='summary' class="clearb fontS">
-              <div id='summarySentence' class="left padded"></div><div id='dates'></div>
-            </div>
-            <div class="clearb">
-              <div id="focusTitle" class="left padded header">Focus on </div><div id='crime categories'></div>
-            </div>
-            <div id="focusOn" class="clearb fontS"></div>
-            <p>Click on the charts to change the category or month displayed.</p>
-            <div id='LSOA4Ward'></div>
-            <p class="clearb">Download <span id='downloadCSV' class="labButton" onclick="createCSV()"> CSV </span></p>
-          </div>
-        </div>
-        <div class="right w50">
-          <div id= "tableDiv">
-            <p id= "tableTitle"></p>
-          </div>
-        </div>
-      </div>
-      <div id="down" class="clearb">
-        <div class="left w50">
-          <div id='timeLine'></div>
-        </div>
-        <div class="right w50">
-          <div id= 'mapTitle' class="clearb fontS"></div>
-          <div id= 'map' class="clearb"></div>
-          <div class="fontSS">*Locations are only an <a href="https://data.police.uk/about/#location-anonymisation">approximation</a> of where the actual crimes occurred.</div>
-        </div>
-      </div>
-
-
+</head>
+<body>
+  <div>
+    <div id='logo'><a id="CSlogo" href="https://www.trafforddatalab.io/index.html" target="_blank"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
+    <div id='title'>Crime Scanner</div>
+  </div>
+  <div class='clearb'>
+    <div class='clearb'>
+      <div id='region'></div>
+      <div id='Local Authority'></div>
     </div>
-    <div id="credits" class='clearb'>
-      <p>Powered by <a href="https://www.gov.uk/government/organisations/home-office">data.police.uk</a>.
-        Population from mid-2017 <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">population estimates</a> from the Office for National Statistics.
-        All information used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>. Find more information about <a href="">Crime Scanner</a></p>
+    <div class='clearb'>
+      <div id='area type'></div>
+      <div id='area'></div>
+    </div>
+  </div>
+  <div id="progressBar" class="clearb"></div>
+  <div id="mainC" class="main clearb">
+    <div id='up' class="clearb">
+      <div class="left w50">
+        <h3 id='areaName'></h3>
+        <div class='clearb fontS'>
+          <div id='summary' class="clearb">
+            <div id='summarySentence'>In&nbsp;<div id='dates'></div>&nbsp;there were <span id="crimeNum"></span> crimes and <span id="asbNum"></span> incidents of anti-social behaviour reported. </div>
+          </div>
+          <div class="clearb ">
+            <div id="focusTitle" class="left padded header">Focus on </div><div id='crime categories'></div>
+          </div>
+          <div id="focusOn" class="clearb"></div>
+          <p>Click on the charts to change the category or month displayed.</p>
+          <div id='LSOA4Ward'></div>
+          <p class="clearb">Download <span id='downloadCSV' class="labButton" onclick="createCSV()"> CSV </span></p>
+        </div>
+      </div>
+      <div class="right w50">
+        <div id= "tableDiv">
+          <p id= "tableTitle"></p>
+        </div>
+      </div>
+    </div>
+    <div id="down" class="clearb">
+      <div class="left w50">
+        <div id='timeLine'></div>
+      </div>
+      <div class="right w50">
+        <div id= 'mapTitle' class="clearb fontS"></div>
+        <div id= 'map' class="clearb"></div>
+        <div class="fontSS">*Locations are only an <a href="https://data.police.uk/about/#location-anonymisation">approximation</a> of where the actual crimes occurred.</div>
+      </div>
+    </div>
+  </div>
+  <div id="credits" class='clearb'>
+    <p>Crime data from <a href="https://data.police.uk/">data.police.uk</a>, population estimates from the <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">Office for National Statistics</a>, and vector boundaries published on <a href="http://geoportal.statistics.gov.uk/">Open Geography Portal</a> are all used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.
+      Contains Ordnance Survey data © Crown copyright and database right 2018. Need <a href="https://www.traffordaatalab/crime_scanner/help.html">help</a> using the Crime Scanner app?</p>
     </div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
@@ -256,13 +265,13 @@ font-size: 17px
     var mainContent = document.getElementById("mainC");
     mainContent.classList.add("nonVisible");
     var endpointODC = "http://opendatacommunities.org/sparql.json"
+    var endpointONS = "http://statistics.data.gov.uk/sparql.json"
     var formatedDateArray= []
     var lastUpdate= ""
     var responsesArray=[]
     var responses=0
     var partialObj=[]
     var unavailableData=[]
-
     var monthViz=0
     var categoryViz=0
     var geojsonArray=[]//geojson array
@@ -280,20 +289,22 @@ font-size: 17px
     var stringCSV = ""
     var fail=false
     var population=0
+    var regionToLAD=[]
+    var LADToWD=[]
 
     if (location.protocol == 'https:')
     location.href = location.href.replace(/^https:/, 'http:')
 
     window.onpopstate = function(event) {
       window.location.reload(true)
-};
+    };
 
     getLastUpdateDate()
     getCategories()//call readURLData()
     loadAreas ("{}")
 
-    var query = "SELECT DISTINCT ?area_name ?area_code WHERE { ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://opendatacommunities.org/def/ontology/admingeo/Region> . ?s <http://publishmydata.com/def/ontology/foi/displayName> ?area_name . ?s <http://publishmydata.com/def/ontology/foi/code> ?area_code . }"
-    postQuery(query,endpointODC,function(d){popSelect(d,"region","loadLocalAuthorityList")});
+    var regionArray=[{attributes:{RGN17CD: "E12000007", RGN17NM: "London"}},{attributes:{RGN17CD: "E12000002", RGN17NM: "North West"}},{attributes:{RGN17CD: "E12000003", RGN17NM: "Yorkshire and The Humber"}},{attributes:{RGN17CD: "E12000001", RGN17NM: "North East"}},{attributes:{RGN17CD: "E12000005", RGN17NM: "West Midlands"}},{attributes:{RGN17CD: "E12000004", RGN17NM: "East Midlands"}},{attributes:{RGN17CD: "E12000009", RGN17NM: "South West"}},{attributes:{RGN17CD: "E12000006", RGN17NM: "East of England"}},{attributes:{RGN17CD: "E12000008", RGN17NM: "South East"}}]
+    popSelect(regionArray,"region","loadLocalAuthorityList","RGN")
 
     var dateNow = new Date();
     var leafletMap = L.map('map')
@@ -338,27 +349,22 @@ font-size: 17px
     }
 
     function loadLocalAuthorityList(LAkey){
+      if(document.getElementById('loadAreas'))document.getElementById('loadAreas').disabled=true;
 
       if(LAkey=="{}"){
         loadAreas ("{}")
         document.getElementById('area').innerHTML = "";
-        document.getElementById('local Authority').innerHTML = "";
+        document.getElementById('Local Authority').innerHTML = "";
       }else{
         document.getElementById('area').innerHTML = "";
         document.getElementById('areaType').disabled=true;
         var LAkey=JSON.parse(LAkey.replace(/£/g, '"'));
         var area_code = LAkey["area_code"];
         var area_name = LAkey["area_name"];
-
-        //ward list
-        var query = "SELECT DISTINCT ?area_name ?area_code "
-        query += "WHERE { ?s <http://publishmydata.com/def/ontology/foi/within> <http://opendatacommunities.org/id/geography/administration/rgn/"+ area_code + "> ."
-        query += "?s <http://publishmydata.com/def/ontology/foi/memberOf> <http://opendatacommunities.org/def/foi/collection/lower-tier-authorities> ."
-        query += "?s <http://www.w3.org/2004/02/skos/core#note> 'Live' ."
-        query += "?s <http://publishmydata.com/def/ontology/foi/displayName> ?area_name ."
-        query += "?s <http://publishmydata.com/def/ontology/foi/code> ?area_code . }"
-
-        postQuery(query,endpointODC,function(d){popSelect(d,"local Authority","loadAreas")});
+        d3.json("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LAD17_RGN17_EN_LU/FeatureServer/0/query?outFields=*&where=rgn17cd=%27"+ area_code +"%27&f=json", function(error, w) {
+          popSelect(w.features,"Local Authority","loadAreas","LAD")
+          document.getElementById('loadAreas').disabled=false;
+        })
       }
     }
 
@@ -380,10 +386,10 @@ font-size: 17px
         var area_code = LAkey["area_code"];
         var area_name = LAkey["area_name"];
         var laSelect = '<select id="areaType" name="frmTypes" onChange="loadAreaList(this.value)" class="datasetSelect"><option value="{}">Select an area type</option>';
-        laSelect += '<option value="{£area_name£:£' + area_name + '£,£area_code£:£' + area_code + '£,£area_type£:£local Authority£}"';
-        laSelect += '>local Authority</option>';
+        laSelect += '<option value="{£area_name£:£' + area_name + '£,£area_code£:£' + area_code + '£,£area_type£:£Local Authority£}"';
+        laSelect += '>Local Authority</option>';
         laSelect += '<option value="{£area_name£:£' + area_name + '£,£area_code£:£' + area_code + '£,£area_type£:£ward£}"';
-        laSelect += '>ward</option>';
+        laSelect += '>Ward</option>';
         laSelect += '</select>';
         var divf = document.createElement('div');
         divf.innerHTML = laSelect;
@@ -404,21 +410,15 @@ font-size: 17px
       var area_name = LAkey["area_name"];
       var area_type = LAkey["area_type"];
 
-      if(area_type == "local Authority"){
+      if(area_type == "Local Authority"){
         key= '{"area_name":"' + area_name + '", "area_code":"' + area_code + '"}';
         getBoundaries(key)
       } else if (area_type == "ward"){
-        var query = 'SELECT DISTINCT ?area_code ?area_name '
-        query += 'WHERE {';
-        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "'+ area_code +'" .'
-        query += '?s <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/contains> ?areas .'
-        query += '?areas <http://statistics.data.gov.uk/def/statistical-entity#code> <http://statistics.data.gov.uk/id/statistical-entity/E05> .'
-        query += '?areas <http://www.w3.org/2004/02/skos/core#note> "Live" .'
-        query += '?areas <http://www.w3.org/2004/02/skos/core#notation> ?area_code .'
-        query += '?areas <http://www.w3.org/2000/01/rdf-schema#label> ?area_name .'
-        query += '}'
 
-        postQuery(query,endpointODC,function(d){popSelect(d,"area","getBoundaries")});
+        d3.json("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/WD17_LAD17_UK_LU/FeatureServer/0/query?outFields=*&where=lad17cd=%27"+ area_code +"%27&f=json", function(error, w) {
+          popSelect(w.features,"area","getBoundaries","WD")
+          document.getElementById('getBoundaries').disabled=false;
+        })
       }
     }
 
@@ -427,97 +427,74 @@ font-size: 17px
       var area_code = key["area_code"];
       var area_name = key["area_name"];
       var area_type = key["area_type"];
+      //var areaTypeKey = ""
       if (/^E01/.test(area_code)){
         nameObj["lsoa"]=area_name;
+        //areaTypeKey = "lsoa11cd"
+        var geoserviceURL="https://ons-inspire.esriuk.com/arcgis/rest/services/Census_Boundaries/Lower_Super_Output_Areas_December_2011_Boundaries/MapServer/2/query?where=lsoa11cd=%27"+ area_code +"%27&outFields=*&outSR=4326&f=geojson"
       }else if (/^E05/.test(area_code)){
         nameObj["ward"]=area_name;
         nameObj["lsoa"]="";
+        var geoserviceURL="https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Wards_December_2017_Boundaries/MapServer/2/query?where=wd17cd=%27"+ area_code +"%27&outFields=*&outSR=4326&f=geojson"
+        //areaTypeKey = "wd11cd"
       }else{
         nameObj["la"]=area_name;
         nameObj["ward"]="";
         nameObj["lsoa"]="";
+        var geoserviceURL="https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Local_Authority_Districts_December_2017_Boundaries/MapServer/3/query?where=lad17cd=%27"+ area_code +"%27&outFields=*&outSR=4326&f=geojson"
       }
+
       if (nameObj["la"]!="" && nameObj["ward"]!="" && nameObj["lsoa"]!=""){
-      nameToPrint=nameObj["lsoa"]+", "+nameObj["la"]
+        nameToPrint=nameObj["lsoa"]+", "+nameObj["la"]
       }
       if (nameObj["la"]!="" && nameObj["ward"]!="" && nameObj["lsoa"]==""){
-      nameToPrint=nameObj["ward"]+", "+nameObj["la"]
+        nameToPrint=nameObj["ward"]+", "+nameObj["la"]
       }
       if (nameObj["la"]!="" && nameObj["ward"]==""){
-      nameToPrint=nameObj["la"]
+        nameToPrint=nameObj["la"]
       }
       areaName=area_name
       areaCode=area_code;
-
-      if (/^E05/.test(area_code)){
-
-        processJson()
-      }else{
-        var query = 'SELECT ?bnode ?as_WKT '
-        query += 'WHERE {'
-        query += '?s <http://www.w3.org/2004/02/skos/core#notation> "' + area_code + '" .'
-        query += '?s <http://www.opengis.net/ont/geosparql#hasGeometry> ?bnode .'
-        query += '?bnode <http://www.opengis.net/ont/geosparql#asWKT> ?as_WKT . }'
-        postQuery(query,endpointODC,processWKTBoundary);
-      }
-    }
-
-    function processJson(){
-
-      var jsonURL="http://statistics.data.gov.uk/boundaries/"+ areaCode +".json"
-      d3.json(jsonURL, function(error, geoData) {prepCoordsForDP(geoData)})
-    }
-
-    function parseResponse(geoData){
-      prepCoordsForDP(geoData.features[0])
-    }
-
-    function processWKTBoundary(boundary){
-
-      var arrayCoords=boundary.results.bindings[0].as_WKT.value.split(")),")
-
-      arrayCoords[0]=arrayCoords[0].split('(((')[1]
-
-      for (i=1;i<arrayCoords.length;i++){
-        arrayCoords[i]=arrayCoords[i].split('((')[1]
-      }
-
-      for (i=0;i<arrayCoords.length;i++){
-        arrayCoords[i]=arrayCoords[i].split(',')
-        for (j=0;j<arrayCoords[i].length;j++){
-          if (j>0){
-            arrayCoords[i][j]=arrayCoords[i][j].replace(/ /,'')
-          }
-          arrayCoords[i][j]=arrayCoords[i][j].split(" ")
-          arrayCoords[i][j][0]=parseFloat(arrayCoords[i][j][0])
-          arrayCoords[i][j][1]=parseFloat(arrayCoords[i][j][1])
-        }
-      }
-      var simpleGeoJson = {"type": "Feature","geometry": {
-        "type": "MultiPolygon",
-        "coordinates":[arrayCoords]
-      }}
-      prepCoordsForDP(simpleGeoJson)
+      //processJson(geoserviceURL)
+      d3.json(geoserviceURL, function(error, geoData) {prepCoordsForDP(geoData.features[0])})
     }
 
     function prepCoordsForDP(simpleGeoJson){
-
       //boundaries for Police API,
-      var coordinatesArray = simpleGeoJson.geometry.coordinates[0];
+      var coordinatesArray = simpleGeoJson.geometry.coordinates;
       var coordinatesStringArray = [];
-      for (i=0;i<coordinatesArray.length;i++){
-        var arrayLength = coordinatesArray[i].length
-        var coordinatesString = ""
 
-        for (var j = 0; j < arrayLength-1; j++) {
-          coordinatesString += coordinatesArray[i][j][1].toFixed(6) + ","
-          if (j==arrayLength-2){
-            coordinatesString += coordinatesArray[i][j][0].toFixed(6)
-          } else {
-            coordinatesString += coordinatesArray[i][j][0].toFixed(6) + ":"
+      if (coordinatesArray.length>1){
+        for (i=0;i<coordinatesArray.length;i++){
+          var arrayLength = coordinatesArray[i][0].length
+          var coordinatesString = ""
+
+          for (var j = 0; j < arrayLength-1; j++) {
+            coordinatesString += coordinatesArray[i][0][j][1].toFixed(6) + ","
+            if (j==arrayLength-2){
+              coordinatesString += coordinatesArray[i][0][j][0].toFixed(6)
+            } else {
+              coordinatesString += coordinatesArray[i][0][j][0].toFixed(6) + ":"
+            }
           }
+          coordinatesStringArray.push(coordinatesString)
         }
-        coordinatesStringArray.push(coordinatesString)
+      }else{
+
+        for (i=0;i<coordinatesArray.length;i++){
+          var arrayLength = coordinatesArray[i].length
+          var coordinatesString = ""
+
+          for (var j = 0; j < arrayLength-1; j++) {
+            coordinatesString += coordinatesArray[i][j][1].toFixed(6) + ","
+            if (j==arrayLength-2){
+              coordinatesString += coordinatesArray[i][j][0].toFixed(6)
+            } else {
+              coordinatesString += coordinatesArray[i][j][0].toFixed(6) + ":"
+            }
+          }
+          coordinatesStringArray.push(coordinatesString)
+        }
       }
 
       boundaryGroup.clearLayers();
@@ -658,7 +635,6 @@ font-size: 17px
         for (var c = 0; c <categories.length; c++) {
           counterObj[categories[c].name].push({serie: categories[c].name, date: formatedDateArray[i], value: 0})
         }
-
         //iterate over each crime
         for (var j = 0; j < arrApiDataMP[i][0].length; j++) { //j is the crime number
           var  crimeObj = {
@@ -772,7 +748,7 @@ font-size: 17px
         formatTime:formatTime,
         container:"#timeLine",
         palette:["#fc6721"],
-        title:"Number of incidents over the past three years, "+ areaName + ".",
+        title:"Number of incidents over the past three years, "+ areaName,
         ytitle:"Count",
         clickFunction:clickDate,
         ytickFormat:"integer",
@@ -792,32 +768,25 @@ font-size: 17px
       .attr('values',"0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1 0 ");
     }
 
-    function popSelect(data,container,onChangeFun){
-      var laNames = data.results.bindings;
+    function popSelect(data,container,onChangeFun,preffix){
 
-      laNames.sort(function(a, b){
-        if(a["area_name"]["value"] < b["area_name"]["value"]) { return -1; }
-        if(a["area_name"]["value"] > b["area_name"]["value"]) { return 1; }
+      data.sort(function(a, b){
+        if(a.attributes[preffix+"17NM"] < b.attributes[preffix+"17NM"]) { return -1; }
+        if(a.attributes[preffix+"17NM"] > b.attributes[preffix+"17NM"]) { return 1; }
         return 0;
       })
-      if (/E05/.test(laNames[0]["area_name"]["value"])){
-        for (var i = 0; i < laNames.length; i++) {
-          var regexp=new RegExp(laNames[i]["area_name"]["value"].slice(-10),'g')
-          laNames[i]["area_name"]["value"]=laNames[i]["area_name"]["value"].replace(regexp,"")
-        }
-      }
-
       var laSelect = '<select id="'+ onChangeFun + '" name="'+ onChangeFun + '" onChange="' + onChangeFun + '(this.value)" class="datasetSelect"><option value="{}">Select ' + container + '</option>';
 
-      for (var i = 0; i < laNames.length; i++) {
-        laSelect += '<option value="{£area_name£:£' + laNames[i]["area_name"]["value"] + '£,£area_code£:£' + laNames[i]["area_code"]["value"] + '£}"';
-        laSelect += '>' + laNames[i]["area_name"]["value"] + '</option>';
+      for (var i = 0; i < data.length; i++) {
+        laSelect += '<option value="{£area_name£:£' + data[i].attributes[preffix+"17NM"] + '£,£area_code£:£' + data[i].attributes[preffix+"17CD"] + '£}"';
+        laSelect += '>' + data[i].attributes[preffix+"17NM"] + '</option>';
       }
       laSelect += '</select>';
       var divf = document.createElement('div');
       divf.innerHTML = laSelect;
       document.getElementById(container).innerHTML = "";
       document.getElementById(container).appendChild(divf);
+      document.getElementById(onChangeFun).disabled=true;
     }
 
     function popSelectDates(dataArray,container,onChangeFun){
@@ -838,11 +807,11 @@ font-size: 17px
       labAjax(dataCategoriesDate,function(d){
 
         categories=d;
-          categories.sort(function(a, b) {
-            if(a["name"] < b["name"]) { return -1; }
-            if(a["name"] > b["name"]) { return 1; }
-            return 0;
-          });
+        categories.sort(function(a, b) {
+          if(a["name"] < b["name"]) { return -1; }
+          if(a["name"] > b["name"]) { return 1; }
+          return 0;
+        });
         readURLData();
         popSelectCategories()
         document.getElementById('selectCategory').disabled=true
@@ -873,7 +842,7 @@ font-size: 17px
         container:"#tableDiv",
         barColour:"white",
         markClick:true,
-        title:"Counts per crime category, "+ areaName + ", "+formatTimeC(parseTime(formatedDateArray[monthViz]))+".",
+        title:"Counts per crime category, "+ areaName + ", "+formatTimeC(parseTime(formatedDateArray[monthViz])),
         clickFunction:clickCategory,
         indexToMark:categoryViz
       }
@@ -890,220 +859,219 @@ font-size: 17px
 
     function produceSummaryStatistics(){
 
-        document.getElementById("summarySentence").innerHTML='There were ' + numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]) + ' crimes and ' + numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"]) + ' incidents of anti-social behaviour reported during';
+      //document.getElementById("summarySentence").innerHTML='There were ' + numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"]) + ' crimes and ' + numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"]) + ' incidents of anti-social behaviour reported during';
+      document.getElementById("crimeNum").innerHTML=numFormat(arrayCounts[0][categories[0]["name"]][monthViz]["value"])
+      document.getElementById("asbNum").innerHTML=numFormat(arrayCounts[0][categories[1]["name"]][monthViz]["value"])
+      var thisMonth=arrayCounts[0][categories[categoryViz].name][monthViz].value
+      var prevMonth=0
+      var rateString=""
+      if (population>0 && thisMonth>0){
+        rateString="(" + (thisMonth/population*1000).toFixed(1) + " per 1,000 residents)"
+      }
+      var noun="offences"
+      if (categoryViz==1){
+        noun="incidents"
+      }
+      var focusOnP1="<li>"+thisMonth+" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+".</li>"
+      //last available month with same month last year/
+      var focusOnP2=""
+      if (!(categoryViz==0 || categoryViz==1)){
+        var perOfTotal=arrayCounts[0][categories[categoryViz].name][monthViz].value/arrayCounts[0][categories[0].name][monthViz].value*100
 
-        var thisMonth=arrayCounts[0][categories[categoryViz].name][monthViz].value
-        var prevMonth=0
-        var rateString=""
-        if (population>0 && thisMonth>0){
-          rateString="(" + (thisMonth/population*1000).toFixed(1) + " per 1,000 residents)"
+        if (perOfTotal>0){
+          focusOnP2="<li>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime.</li>"
         }
-        var noun="offences"
-        if (categoryViz==1){
-          noun="incidents"
-        }
-        var focusOnP1="<p>"+thisMonth+" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+" .</p>"
-        //last available month with same month last year/
-        var focusOnP2=""
-        if (!(categoryViz==0 || categoryViz==1)){
-          var perOfTotal=arrayCounts[0][categories[categoryViz].name][monthViz].value/arrayCounts[0][categories[0].name][monthViz].value*100
 
-          if (perOfTotal>0){
-            focusOnP2="<p>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime.</p>"
-          }
-
-        }
-        var focusOnP3="<p>"
-        if(monthViz<24){
+      }
+      var focusOnP3="<li>"
+      if(monthViz<24){
         prevMonth=arrayCounts[0][categories[categoryViz].name][monthViz+12].value
         var monthChange=(thisMonth-prevMonth)/prevMonth*100
-              if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
-                focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
-              } else if (monthChange>0){
-                focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% more "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
-              } else if (monthChange<0){
-                focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
-              } else if (monthChange==0){
-                focusOnP3+= "There were the same number of "+ noun +" than the same month last year (n = "+ numFormat(prevMonth) +")"
-              } else {
-                focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
-              }
-
-              if(monthViz<12){
-                var lastYear=0
-                var prevYear=0
-                for(i=monthViz;i<monthViz+12;i++){
-                  lastYear+=arrayCounts[0][categories[categoryViz].name][i].value
-                  prevYear+=arrayCounts[0][categories[categoryViz].name][i+12].value
-                }
-                var yearChange=(lastYear-prevYear)/prevYear*100
-
-                if(yearChange == Number.POSITIVE_INFINITY || yearChange == Number.NEGATIVE_INFINITY || yearChange == NaN){
-                  focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
-                } else if (yearChange>0){
-                  focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% more over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
-                } else if (yearChange<0){
-                  focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% fewer over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
-                } else if (yearChange==0){
-                  focusOnP3+= ", and the same over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
-                } else {
-                  focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
-                }
-              }
+        if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
+          focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
+        } else if (monthChange>0){
+          focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% more "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
+        } else if (monthChange<0){
+          focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
+        } else if (monthChange==0){
+          focusOnP3+= "There were the same number of "+ noun +" than the same month last year (n = "+ numFormat(prevMonth) +")"
+        } else {
+          focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
         }
-        focusOnP3+=".</p>"
-        document.getElementById("focusOn").innerHTML=focusOnP1+focusOnP2+focusOnP3
 
-}
+        if(monthViz<12){
+          var lastYear=0
+          var prevYear=0
+          for(i=monthViz;i<monthViz+12;i++){
+            lastYear+=arrayCounts[0][categories[categoryViz].name][i].value
+            prevYear+=arrayCounts[0][categories[categoryViz].name][i+12].value
+          }
+          var yearChange=(lastYear-prevYear)/prevYear*100
 
-function clickDate(e,d){
-  for (var i=0;i < formatedDateArray.length;i++){
-    if (formatedDateArray[i]==d.date){
-      monthViz=i;
-      produceMap()
-      callHorizontalBarChart()
-      produceSummaryStatistics()
-      var element = document.getElementById("selectDate");
-      element.value=monthViz
-      break;
-    }
-  }
-}
+          if(yearChange == Number.POSITIVE_INFINITY || yearChange == Number.NEGATIVE_INFINITY || yearChange == NaN){
+            focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
+          } else if (yearChange>0){
+            focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% more over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+          } else if (yearChange<0){
+            focusOnP3+= ", and " + Math.abs(yearChange.toFixed(1)) + "% fewer over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+          } else if (yearChange==0){
+            focusOnP3+= ", and the same over the past 12 months (n = "+ numFormat(lastYear) +") compared with the preceding 12 months (n = "+ numFormat(prevYear) +")"
+          } else {
+            focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
+          }
+        }
+      }
+      focusOnP3+=".</li>"
+      document.getElementById("focusOn").innerHTML="<ul class='sList'>"+focusOnP1+focusOnP2+focusOnP3+"<ul>"
 
-function clickCategory(e,d){
-  for (var i = 0; i < categories.length; i++){
-    if (categories[i].name==d.name){
-      categoryViz = i
-      produceMap()
-      produceTimeline()
-      produceSummaryStatistics()
-      var element = document.getElementById("selectCategory");
-      element.value = categoryViz
-    }
-  }
-}
-
-function postQuery(query, url, callback){
-  query="query="+encodeURIComponent(query)
-  labAjax(url,callback,{ data:query, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}] });
-}
-
-function createCSV(){
-
-  var download = function(content, fileName, mimeType) {
-    var a = document.createElement('a');
-    mimeType = mimeType || 'application/octet-stream';
-
-    if (navigator.msSaveBlob) { // IE10
-      navigator.msSaveBlob(new Blob([content], {
-        type: mimeType
-      }), fileName);
-    } else if (URL && 'download' in a) { //html5 A[download]
-      a.href = URL.createObjectURL(new Blob([content], {
-        type: mimeType
-      }));
-      a.setAttribute('download', fileName);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } else {
-      location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
-    }
-  }
-  download(stringCSV, 'Crime-Data.csv', 'text/csv;encoding:utf-8');
-}
-
-function readURLData(){
-  var code=labGetQryStrValByKey("code")
-  var name=labGetQryStrValByKey("name")
-  var within = (labGetQryStrValByKey("within")) ? labGetQryStrValByKey("within"):"";
-  nameToPrint=name;
-  nameObj["la"]=within
-
-  if (/^E0/.test(code)){
-    getBoundaries('{"area_name":"' + name + '", "area_code":"' + code + '"}')
-  }else{
-    //code=E05000825&name=Clifford&within=Trafford
-    nameToPrint="Clifford";
-    nameObj["la"]="Trafford";
-    getBoundaries('{"area_name":"Clifford", "area_code":"E05000825"}')
-  }
-}
-
-function statusBar(){
-  var monthResp=0
-  for (var i = 0; i < responsesArray.length; i++){
-    monthResp=monthResp+responsesArray[i].length
-  }
-  var width=monthResp*100/(36*responsesArray.length);
-  var pBar=document.getElementById("progressBar")
-  pBar.style.width = width + '%';
-}
-
-function LSOAsLink(){
-  d3.json("http://www.trafforddatalab.io/crime_scanner/best_fit_lookup.json", function(error, lookUp) {
-
-    if (lookUp[areaCode]){
-      document.getElementById("LSOA4Ward").innerHTML="<div class='left'>Looking for <a onclick='showLSOASelect()'>LSOAs</a>?</div><div id='LSOA' class='left'></div>"
-
-var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
-
-for (var i = 0; i < lookUp[areaCode].length; i++) {
-  LSOASelect += '<option value="{£area_name£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_code£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_type£:£LSOA£}"';
-  LSOASelect += '>' + lookUp[areaCode][i]["lsoa11cd"] + '</option>';
-}
-LSOASelect += '</select>';
-var divf = document.createElement('div');
-divf.innerHTML = LSOASelect;
-document.getElementById("LSOA").innerHTML = "";
-document.getElementById("LSOA").appendChild(divf);
-var elem=document.getElementById("LSOA");
-elem.classList.add("nonVisible");
-
-
-    }else{
-      document.getElementById("LSOA4Ward").innerHTML=""
     }
 
-})
-}
-
-function showLSOASelect(){
-  var LSOADiv = document.getElementById("LSOA");
-  LSOADiv.classList.remove("nonVisible");
-}
-
-function LSOApopup(){
-
-    var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
-
-    for (var i = 0; i < lookUp[areaCode].length; i++) {
-      LSOASelect += '<option value="{£area_name£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_code£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_type£:£LSOA£}"';
-      LSOASelect += '>' + lookUp[areaCode][i]["lsoa11cd"] + '</option>';
+    function clickDate(e,d){
+      for (var i=0;i < formatedDateArray.length;i++){
+        if (formatedDateArray[i]==d.date){
+          monthViz=i;
+          produceMap()
+          callHorizontalBarChart()
+          produceSummaryStatistics()
+          var element = document.getElementById("selectDate");
+          element.value=monthViz
+          break;
+        }
+      }
     }
-    LSOASelect += '</select>';
-    var divf = document.createElement('div');
-    divf.innerHTML = LSOASelect;
-    document.getElementById("LSOA").innerHTML = "";
-    document.getElementById("LSOA").appendChild(divf);
-}
 
-function getPopulation(){
-  d3.json("http://www.trafforddatalab.io/crime_scanner/population.json", function(error, populationArray) {
-
-    if(populationArray[areaCode]){
-      population=populationArray[areaCode]["population"]
-    }else{
-      population=0
+    function clickCategory(e,d){
+      for (var i = 0; i < categories.length; i++){
+        if (categories[i].name==d.name){
+          categoryViz = i
+          produceMap()
+          produceTimeline()
+          produceSummaryStatistics()
+          var element = document.getElementById("selectCategory");
+          element.value = categoryViz
+        }
+      }
     }
-    produceSummaryStatistics()
-})
-if (/^E05/.test(areaCode)) {
-  LSOAsLink()
-} else if (!/^E01/.test(areaCode)) {
-  document.getElementById("LSOA4Ward").innerHTML=""
-}
-}
-</script>
+
+    function postQuery(query, url, callback){
+      query="query="+encodeURIComponent(query)
+      labAjax(url,callback,{ data:query, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}] });
+    }
+
+    function createCSV(){
+
+      var download = function(content, fileName, mimeType) {
+        var a = document.createElement('a');
+        mimeType = mimeType || 'application/octet-stream';
+
+        if (navigator.msSaveBlob) { // IE10
+          navigator.msSaveBlob(new Blob([content], {
+            type: mimeType
+          }), fileName);
+        } else if (URL && 'download' in a) { //html5 A[download]
+          a.href = URL.createObjectURL(new Blob([content], {
+            type: mimeType
+          }));
+          a.setAttribute('download', fileName);
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+        }
+      }
+      download(stringCSV, 'Crime-Data.csv', 'text/csv;encoding:utf-8');
+    }
+
+    function readURLData(){
+      var code=labGetQryStrValByKey("code")
+      var name=labGetQryStrValByKey("name")
+      var within = (labGetQryStrValByKey("within")) ? labGetQryStrValByKey("within"):"";
+      nameToPrint=name;
+      nameObj["la"]=within
+
+      if (/^E0/.test(code)){
+        getBoundaries('{"area_name":"' + name + '", "area_code":"' + code + '"}')
+      }else{
+        //code=E05000825&name=Clifford&within=Trafford
+        nameToPrint="Clifford";
+        nameObj["la"]="Trafford";
+        getBoundaries('{"area_name":"Clifford", "area_code":"E05000825"}')
+      }
+    }
+
+    function statusBar(){
+      var monthResp=0
+      for (var i = 0; i < responsesArray.length; i++){
+        monthResp=monthResp+responsesArray[i].length
+      }
+      var width=monthResp*100/(36*responsesArray.length);
+      var pBar=document.getElementById("progressBar")
+      pBar.style.width = width + '%';
+    }
+
+    function LSOAsLink(){
+
+      d3.json("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LSOA11_WD17_EW_LU/FeatureServer/0/query?outFields=*&where=wd17cd=%27"+ areaCode +"%27&f=json", function(error, lookUp) {
+
+        if (lookUp.features.length>0){
+          document.getElementById("LSOA4Ward").innerHTML="<div class='left'>Looking for <a onclick='showLSOASelect()'>LSOAs</a>?</div><div id='LSOA' class='left'></div>"
+
+          var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
+
+          for (var i = 0; i < lookUp.features.length; i++) {
+            LSOASelect += '<option value="{£area_name£:£' + lookUp.features[i].attributes["LSOA11CD"] + '£,£area_code£:£' + lookUp.features[i].attributes["LSOA11CD"] + '£,£area_type£:£LSOA£}"';
+            LSOASelect += '>' + lookUp.features[i].attributes["LSOA11CD"] + '</option>';
+          }
+          LSOASelect += '</select>';
+          var divf = document.createElement('div');
+          divf.innerHTML = LSOASelect;
+          document.getElementById("LSOA").innerHTML = "";
+          document.getElementById("LSOA").appendChild(divf);
+          var elem=document.getElementById("LSOA");
+          elem.classList.add("nonVisible");
+        }else{
+          document.getElementById("LSOA4Ward").innerHTML=""
+        }
+      })
+    }
+
+    function showLSOASelect(){
+      var LSOADiv = document.getElementById("LSOA");
+      LSOADiv.classList.remove("nonVisible");
+    }
+
+    function LSOApopup(){
+
+      var LSOASelect = '<select id="LSOASelect" name="LSOASelect" onChange="getBoundaries(this.value)" class="datasetSelect"><option value="{}">Select LSOA</option>';
+
+      for (var i = 0; i < lookUp[areaCode].length; i++) {
+        LSOASelect += '<option value="{£area_name£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_code£:£' + lookUp[areaCode][i]["lsoa11cd"] + '£,£area_type£:£LSOA£}"';
+        LSOASelect += '>' + lookUp[areaCode][i]["lsoa11cd"] + '</option>';
+      }
+      LSOASelect += '</select>';
+      var divf = document.createElement('div');
+      divf.innerHTML = LSOASelect;
+      document.getElementById("LSOA").innerHTML = "";
+      document.getElementById("LSOA").appendChild(divf);
+    }
+
+    function getPopulation(){
+      d3.json("http://www.trafforddatalab.io/crime_scanner/population.json", function(error, populationArray) {
+
+        if(populationArray[areaCode]){
+          population=populationArray[areaCode]["population"]
+        }else{
+          population=0
+        }
+        produceSummaryStatistics()
+      })
+      if (/^E05/.test(areaCode)) {
+        LSOAsLink()
+      } else if (!/^E01/.test(areaCode)) {
+        document.getElementById("LSOA4Ward").innerHTML=""
+      }
+    }
+  </script>
 </body>
 </html>
