@@ -872,19 +872,20 @@
       if (categoryViz==1){
         noun="incidents"
       }
-      var focusOnP1="<li>"+thisMonth+" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+".</li>"
+      var focusOnP1="<li>"+thisMonth+" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+"</li>"
       //last available month with same month last year/
       var focusOnP2=""
       if (!(categoryViz==0 || categoryViz==1)){
         var perOfTotal=arrayCounts[0][categories[categoryViz].name][monthViz].value/arrayCounts[0][categories[0].name][monthViz].value*100
 
         if (perOfTotal>0){
-          focusOnP2="<li>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime.</li>"
+          focusOnP2="<li>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime</li>"
         }
 
       }
-      var focusOnP3="<li>"
+      var focusOnP3=""
       if(monthViz<24){
+        focusOnP3+="<li>"
         prevMonth=arrayCounts[0][categories[categoryViz].name][monthViz+12].value
         var monthChange=(thisMonth-prevMonth)/prevMonth*100
         if(monthChange == Number.POSITIVE_INFINITY || monthChange == Number.NEGATIVE_INFINITY || monthChange == NaN){
@@ -920,8 +921,9 @@
             focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
           }
         }
+        focusOnP3+="</li>"
       }
-      focusOnP3+=".</li>"
+
       document.getElementById("focusOn").innerHTML="<ul class='sList'>"+focusOnP1+focusOnP2+focusOnP3+"<ul>"
 
     }
