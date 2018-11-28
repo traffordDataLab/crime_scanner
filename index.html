@@ -139,7 +139,7 @@
   #progressBar
   {
     width: 0%;
-    height: 2px;
+    height: 3px;
     background-color: #fc6721;
     padding: 0;
     margin:0;
@@ -199,7 +199,7 @@
 </head>
 <body>
   <div>
-    <div id='logo'><a id="CSlogo" href="https://www.trafforddatalab.io/index.html" target="_blank"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
+    <div id='logo'><a id="CSlogo" href="http://www.trafforddatalab.io/crime_scanner/index.html"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
     <div id='title'>Crime Scanner</div>
   </div>
   <div class='clearb'>
@@ -249,7 +249,7 @@
   </div>
   <div id="credits" class='clearb'>
     <p>Crime data from <a href="https://data.police.uk/">data.police.uk</a>, population estimates from the <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">Office for National Statistics</a>, and digital vector boundaries from <a href="http://geoportal.statistics.gov.uk/">Open Geography Portal</a> are all used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.
-      Contains Ordnance Survey data © Crown copyright and database right 2018. Need <a href="http://www.trafforddatalab.io/crime_scanner/docs/about.html" target="_blank">help</a> using the Crime Scanner app?</p>
+      Contains Ordnance Survey data © Crown copyright and database right 2018. Developed by <a href="https://www.trafforddatalab.io" target="_blank">Trafford Data Lab</a> under the <a href="https://www.trafforddatalab.io/LICENSE.txt" target="_blank">MIT</a> License. Need <a href="http://www.trafforddatalab.io/crime_scanner/docs/about.html" target="_blank">help</a> using the Crime Scanner app?</p>
     </div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
@@ -263,8 +263,6 @@
     <script src="http://www.trafforddatalab.io/assets/d3/horizBarChart.js"></script>
     <script>
     var mainContent = document.getElementById("mainC");
-    var endpointODC = "http://opendatacommunities.org/sparql.json"
-    var endpointONS = "http://statistics.data.gov.uk/sparql.json"
     var formatedDateArray= []
     var lastUpdate= ""
     var responsesArray=[]
