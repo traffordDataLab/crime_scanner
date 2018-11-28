@@ -1,2 +1,84 @@
-# crime_scanner
-App to visualise crime and anti-social behaviour incidents
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<title>About Crime Scanner</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+	<meta charset="UTF-8"/>
+	<link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
+	<link rel="stylesheet" href="https://www.trafforddatalab.io/css/labWebsite.css"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto"/>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+	<style>
+	html, body
+  {
+    padding: 5px 20px 5em 12px;
+  }
+	#logo
+	{
+		display: inline-block;
+		float:left ;
+		padding-right: 5px;
+	}
+	.traffordDataLabLogo
+	{
+		margin:0px
+	}
+	#title
+	{
+		font-size: 25px;
+		float:left ;
+		display: inline-block;
+		color: #757575;
+	}
+	.main
+	{
+		border-top: 1px solid gray;
+		margin-top: 32px;
+	}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<div id='logo'><a id="CSlogo" href="https://www.trafforddatalab.io/crime_scanner/index.html" target="_blank"><img src="https://www.trafforddatalab.io/crime_scanner/crime_scanner_logo.png" alt="Crime scanner" height="28" border="0" class="traffordDataLabLogo"/></a></div>
+			<div id='title'>Crime Scanner</div>
+		</div>
+		<div class="main">
+			<h2>About</h2>
+
+			<p><a href="http://www.trafforddatalab.io/crime_scanner/index.html">Crime Scanner</a> allows you to interactively visualise street level crime and anti-social behaviour (ASB) incidents in your area. You can filter counts of crime and ASB over the last three years and see the results in linked visualisations.</p>
+
+			<h4>Data</h4>
+
+			<p>The application retrieves police recorded crime and incidents of anti-social behaviour in England from <a href="https://data.police.uk/">data.police.uk</a>. Thirteen different <a href="https://www.police.uk/about-this-site/faqs/#what-do-the-crime-categories-mean">crime categories</a> are available. Crime and anti-social behaviour incidents can be filtered by Local Authority District, Electoral ward and <a href="http://geoportal.statistics.gov.uk/datasets/500d4283cbe54e3fa7f358399ba3783e_0">best-fitting</a> Lower-layer Super Output Area (LSOA) levels. </p>
+
+			<h4>Please note:</h4>
+			<ul>
+				<li> The loading time for some larger Local Authority Districts may be longer because the application is retrieving larger volumes of data. The orange progress bar provides a real time indication of the loading time. </li>
+				<li> The location of crimes and incidents of anti-social behaviour are approximate. Crime and ASB data published on <a href="https://data.police.uk/">data.police.uk</a> are subject to a <a href="https://data.police.uk/about/#location-anonymisation">location anonymisation process</a> which is intended to ensure the privacy of victims of crime. A review of the process can be found in <a href="https://www.tandfonline.com/doi/abs/10.1080/15230406.2014.972456">Tompson et al. (2015)</a>.</li>
+				<li> Some offences such as domestic violence are not available.</li>
+				<li> Not all crimes are reported to the police.</li>
+				<li> Crime rates have been calculated using the number of residents in each area. This is an imperfect denominator because it doesn't necessarily reflect the daytime population of an area or the number of criminal targets available. </li>
+			</ul>
+
+			<h4>Sharing</h4>
+			<p><a href="http://www.trafforddatalab.io/crime_scanner/index.html">Crime Scanner</a> can be set to load data for a specific area by bookmarking the page once the reported crime and ASB data have loaded. The application can also be embedded in your website using an iframe. For example,</p>
+			<pre>
+				&lt;iframe src="http://www.trafforddatalab.io/crime_scanner/?code=E08000009&name=Trafford" width="100%" height="800px"&gt;&lt;/iframe&gt;
+			</pre>
+
+			<h4>Credits</h4>
+			<p>Police recorded crime data from the <a href="https://www.gov.uk/government/organisations/home-office">Home Office</a> and mid-2017 <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">population estimates</a> from the Office for National Statistics are used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>. Digital vector boundaries derive from the <a href="http://geoportal.statistics.gov.uk/">Open Geography Portal</a>.</p>
+
+			<h4>Keeping safe</h4>
+			<ul>
+				<li>Contact your <a href="https://www.police.uk/contact/force-websites/">local police force</a>.</li>
+				<li>Pass information anonymously to the police via <a href="http://www.crimestoppers-uk.org/">CrimeStoppers</a>.</li>
+				<li>Join your local <a href="http://www.ourwatch.org.uk">Neighbourhood Watch</a> group.</li>
+				<li>Report graffiti and fly tipping to your local council via <a href="http://www.fixmystreet.com/">FixMyStreet</a>.</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
