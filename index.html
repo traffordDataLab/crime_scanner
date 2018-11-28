@@ -248,7 +248,7 @@
     </div>
   </div>
   <div id="credits" class='clearb'>
-    <p>Crime data from <a href="https://data.police.uk/">data.police.uk</a>, population estimates from the <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">Office for National Statistics</a>, and vector boundaries published on <a href="http://geoportal.statistics.gov.uk/">Open Geography Portal</a> are all used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.
+    <p>Crime data from <a href="https://data.police.uk/">data.police.uk</a>, population estimates from the <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates">Office for National Statistics</a>, and digital vector boundaries from <a href="http://geoportal.statistics.gov.uk/">Open Geography Portal</a> are all used under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.
       Contains Ordnance Survey data © Crown copyright and database right 2018. Need <a href="http://www.trafforddatalab.io/crime_scanner/docs/about.html" target="_blank">help</a> using the Crime Scanner app?</p>
     </div>
     <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -456,6 +456,8 @@
       areaCode=area_code;
       //processJson(geoserviceURL)
       d3.json(geoserviceURL, function(error, geoData) {prepCoordsForDP(geoData.features[0])})
+      var pBar=document.getElementById("progressBar")
+      pBar.style.width = '3%';
     }
 
     function prepCoordsForDP(simpleGeoJson){
@@ -638,7 +640,7 @@
         for (var j = 0; j < arrApiDataMP[i][0].length; j++) { //j is the crime number
           var  crimeObj = {
             "type": "Feature",
-            "properties": {"category": ""},
+            "properties": {"category": "", "street":arrApiDataMP[i][0][j].location.street.name},
             "geometry": {
               "type": "Point",
               "coordinates": [parseFloat(arrApiDataMP[i][0][j].location.longitude),parseFloat(arrApiDataMP[i][0][j].location.latitude)]
@@ -728,7 +730,7 @@
       };
 
       L.geoJson(geojsonArray[monthViz], {filter: filterCategory, pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, geojsonMarkerOptions);
+        return L.circleMarker(latlng, geojsonMarkerOptions).bindPopup(feature.properties.street);;
       }}).addTo(clusters)//.addTo(leafletMap);
       leafletMap.addLayer(clusters);
 
@@ -871,14 +873,14 @@
       if (categoryViz==1){
         noun="incidents"
       }
-      var focusOnP1="<li>"+ numFormat(thisMonth) +" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+"</li>"
+      var focusOnP1="<li>"+ numFormat(thisMonth) +" "+noun+" "+rateString+" were reported during "+formatTimeB(parseTime(formatedDateArray[monthViz]))+".</li>"
       //last available month with same month last year/
       var focusOnP2=""
       if (!(categoryViz==0 || categoryViz==1)){
         var perOfTotal=arrayCounts[0][categories[categoryViz].name][monthViz].value/arrayCounts[0][categories[0].name][monthViz].value*100
 
         if (perOfTotal>0){
-          focusOnP2="<li>This represents "+ perOfTotal.toFixed(1)+"% of all reported crime</li>"
+          focusOnP2="<li>These " + noun + " represent "+ perOfTotal.toFixed(1)+"% of all reported crime.</li>"
         }
 
       }
@@ -894,7 +896,7 @@
         } else if (monthChange<0){
           focusOnP3+= "There were " + Math.abs(monthChange.toFixed(1)) + "% fewer "+noun+" than the same month last year (n = "+ numFormat(prevMonth) +")"
         } else if (monthChange==0){
-          focusOnP3+= "There were the same number of "+ noun +" than the same month last year (n = "+ numFormat(prevMonth) +")"
+          focusOnP3+= "There were the same number of "+ noun +" as the same month last year (n = "+ numFormat(prevMonth) +")"
         } else {
           focusOnP3+= "There were " + numFormat(prevMonth) + " " + noun + " reported the same month last year"
         }
@@ -920,7 +922,7 @@
             focusOnP3+= ", "+ numFormat(lastYear) + " over the past 12 months and " + numFormat(prevYear) + " over the previous 12 months"
           }
         }
-        focusOnP3+="</li>"
+        focusOnP3+=".</li>"
       }
 
       document.getElementById("focusOn").innerHTML="<ul class='sList'>"+focusOnP1+focusOnP2+focusOnP3+"<ul>"
@@ -1006,9 +1008,9 @@
       for (var i = 0; i < responsesArray.length; i++){
         monthResp=monthResp+responsesArray[i].length
       }
-      var width=monthResp*100/(36*responsesArray.length);
+      var width=monthResp*97/(36*responsesArray.length);
       var pBar=document.getElementById("progressBar")
-      pBar.style.width = width + '%';
+      pBar.style.width = (width+3) + '%';
     }
 
     function LSOAsLink(){
