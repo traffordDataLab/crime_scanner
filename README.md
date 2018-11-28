@@ -15,7 +15,8 @@ The application retrieves police recorded crime and incidents of anti-social beh
 #### Sharing
 [Crime Scanner](http://www.trafforddatalab.io/crime_scanner/index.html) can be set to load data for a specific area by bookmarking the page once the reported crime and ASB data have loaded. The application can also be embedded in your website using an iframe. For example,
 
-``` <iframe src="http://www.trafforddatalab.io/crime_scanner/?code=E08000009&name=Trafford" width="100%" height="800px"></iframe>
+``` html
+<iframe src="http://www.trafforddatalab.io/crime_scanner/?code=E08000009&name=Trafford" width="100%" height="800px"></iframe>
 ```
 
 #### Credits
