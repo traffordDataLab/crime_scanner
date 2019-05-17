@@ -514,10 +514,11 @@
 
     function sendPoliceDataRequest(coordinatesString,polyIndex,polyCount){
 
-      urlDP = "https://data.police.uk/api/crimes-street/"+categories[0].url+"s3?"
+      urlDP = "https://data.police.uk/api/crimes-street/"+categories[0].url+"?"
       d3.select("#timeLine").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");
       d3.select("#tableDiv").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");;
       for (var i = 0; i < formatedDateArray.length; i++) {
+        sleep(1000);
         data = "poly="+encodeURIComponent(coordinatesString)+"&date="+encodeURIComponent(formatedDateArray[i]);
         partialObj[i]=[]
         scheduleDataRequest(data,i,polyIndex,polyCount);
@@ -1072,6 +1073,15 @@
       } else if (!/^E01/.test(areaCode)) {
         document.getElementById("LSOA4Ward").innerHTML=""
       }
+    }
+
+    function sleep(milliseconds) {
+      var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+              break;
+            }
+          }
     }
   </script>
 </body>
