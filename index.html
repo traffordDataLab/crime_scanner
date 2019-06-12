@@ -453,7 +453,19 @@
       areaName=area_name
       areaCode=area_code;
       //processJson(geoserviceURL)
-      d3.json(geoserviceURL, function(error, geoData) {prepCoordsForDP(geoData.features[0])})
+      d3.json(geoserviceURL, function(error, geoData) {
+        if(error)
+        {
+          alert("Geography not available at the moment, try later or chose another area/area type.");
+          var elemSelect=document.getElementsByClassName("datasetSelect")
+          Array.prototype.forEach.call(elemSelect,function(element) {
+            element.disabled=false;
+          });
+          document.getElementById("downloadCSV").style.pointerEvents="auto"
+          document.getElementById("progressBar").style.width = '0%';
+        }
+        prepCoordsForDP(geoData.features[0])
+      })
       var pBar=document.getElementById("progressBar")
       pBar.style.width = '3%';
     }
@@ -461,7 +473,7 @@
     function prepCoordsForDP(simpleGeoJson){
       //boundaries for Police API,
       var coordinatesArray = simpleGeoJson.geometry.coordinates;
-      var coordinatesStringArray = [];
+      coordinatesStringArray = [];
 
       if (coordinatesArray.length>1){
         for (i=0;i<coordinatesArray.length;i++){
@@ -502,31 +514,44 @@
       .addTo(boundaryGroup);
       leafletMap.fitBounds(boundary.getBounds()); // adjust the zoom to fit the boundary to the screen size
 
-      var polyCount=coordinatesStringArray.length
       responsesArray=[]
       responses=0
       partialObj=[]
+      polyIndex=0
+      polyCount=coordinatesStringArray.length
+      dateIndex=0
+      categoryIndex=1
+
       for(i=0;i<polyCount;i++){
         responsesArray.push([])
-        sendPoliceDataRequest(coordinatesStringArray[i],i,polyCount);
       }
+
+      var totalCalls=polyCount*formatedDateArray.length
+
+      sendPoliceDataRequest();
     }
 
-    function sendPoliceDataRequest(coordinatesString,polyIndex,polyCount){
-
+    function sendPoliceDataRequest(){
       urlDP = "https://data.police.uk/api/crimes-street/"+categories[0].url+"?"
       d3.select("#timeLine").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");
-      d3.select("#tableDiv").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");;
-      for (var i = 0; i < formatedDateArray.length; i++) {
-        data = "poly="+encodeURIComponent(coordinatesString)+"&date="+encodeURIComponent(formatedDateArray[i]);
-        partialObj[i]=[]
-        scheduleDataRequest(data,i,polyIndex,polyCount);
-      }
+      d3.select("#tableDiv").select("svg").attr("filter", "url(#desaturate)").style("pointer-events","none");
+      data = "poly="+encodeURIComponent(coordinatesStringArray[polyIndex])+"&date="+encodeURIComponent(formatedDateArray[dateIndex]);
+      partialObj[dateIndex]=[]
+      scheduleDataRequest(data)
+
     }
 
-    function scheduleDataRequest(data,dateIndex,polyIndex,polyCount){
+    function monthRecurse(){
+      dateIndex=dateIndex+1
+      categoryIndex=1
+      data = "poly="+encodeURIComponent(coordinatesStringArray[polyIndex])+"&date="+encodeURIComponent(formatedDateArray[dateIndex]);
+      partialObj[dateIndex]=[]
+      scheduleDataRequest(data)
+    }
+
+    function scheduleDataRequest(data){
       var elemSelect=document.getElementsByClassName("datasetSelect")
-      Array.prototype.forEach.call(elemSelect,function(element) {
+      Array.prototype.forEach.call(elemSelect,function(element){
         element.disabled=true;
       });
 
@@ -534,20 +559,17 @@
 
       if (/^E08000003/.test(areaCode) || /^E08000012/.test(areaCode)){
         partialObj[polyIndex][dateIndex]={index:dateIndex,crimeObj:[],count:0}
-        for (var j = 1; j<categories.length; j++){
-          urlDPcat = "https://data.police.uk/api/crimes-street/"+categories[j].url+"?";
-          reScheduleDataRequest(data,urlDPcat,dateIndex,polyIndex,polyCount)
-        }
+        reScheduleDataRequest(data)
       }else{
         labAjax(urlDP,function(d){
           responsesArray[polyIndex].push([d,dateIndex]);
-
-          if (responsesArray[polyIndex].length==formatedDateArray.length){responses=responses+1}
+          if (responsesArray[polyIndex].length==formatedDateArray.length){polyIndex=polyIndex+1;dateIndex=0}
+          //dateIndex=dateIndex+1
           if (fail==false)statusBar()
-          if (responses==polyCount){
+          if (polyIndex==polyCount){
             if(fail==false){
               produceGeoJson(responsesArray)
-            }else{
+            } else {
               alert("Incomplete or missing response from the server, please try again. If the problem persists try later.");
               fail==false;
               var elemSelect=document.getElementsByClassName("datasetSelect")
@@ -556,12 +578,20 @@
               });
               document.getElementById("downloadCSV").style.pointerEvents="auto"
             }
+          } else {
+            monthRecurse()
           }
         },{ data:data, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}], unsuccessfulRequest: testForUnsuccesful})
       }
     }
 
-    function reScheduleDataRequest(data,url,dateIndex,polyIndex,polyCount){
+    function categoryRecurse(data){
+      categoryIndex=categoryIndex+1
+      reScheduleDataRequest(data)
+    }
+
+    function reScheduleDataRequest(data){
+      url = "https://data.police.uk/api/crimes-street/"+categories[categoryIndex].url+"?";
       labAjax(url,function(d){
         if (fail==false){
           partialObj[polyIndex][dateIndex].count=partialObj[polyIndex][dateIndex].count+1;
@@ -572,10 +602,9 @@
           }
           if (partialObj[polyIndex][dateIndex].count==categories.length-1){
             responsesArray[polyIndex].push([partialObj[polyIndex][dateIndex].crimeObj,dateIndex])
-
-            if (responsesArray[polyIndex].length==formatedDateArray.length){responses=responses+1}
+            if (responsesArray[polyIndex].length==formatedDateArray.length){polyIndex=polyIndex+1;dateIndex=0}
             if(fail==false)statusBar()
-            if (responses==polyCount){
+            if (polyIndex==polyCount){
               if(fail==false){
                 produceGeoJson(responsesArray)
               }else{
@@ -587,7 +616,11 @@
                 })
                 document.getElementById("downloadCSV").style.pointerEvents="auto"
               }
+            } else{
+              monthRecurse()
             }
+          }else{
+            categoryRecurse(data)
           }
         }
       },{ data:data, method: 'POST', header: [{ header: 'Accept', value: 'application/sparql-results+json' }, { header: 'Content-Type', value: 'application/x-www-form-urlencoded'}], unsuccessfulRequest: testForUnsuccesful})
